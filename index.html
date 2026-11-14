@@ -208,10 +208,83 @@ textarea.inp{min-height:84px;resize:vertical}
 .arow .ti b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .arow .ti span{font-size:12px;color:var(--muted)}
 .sw{width:10px;height:10px;border-radius:3px;flex:none}
+#printRoot{display:none}
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:80;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
 #toast div{background:var(--dark);color:#fff;padding:10px 16px;border-radius:9px;font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.2)}
 .spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
+/* Observatório */
+.obsbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.obsbar .inp{width:auto}
+.deck{display:flex;flex-direction:column;gap:22px;align-items:center}
+.slide{container-type:inline-size;width:100%;max-width:1100px;aspect-ratio:16/9;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,54,65,.12);overflow:hidden;position:relative;color:var(--dark)}
+.slide .in{position:absolute;inset:0;padding:4cqw 4.6cqw 5.2cqw;display:flex;flex-direction:column;gap:1.6cqw}
+.slide .sf{position:absolute;left:4.6cqw;right:4.6cqw;bottom:1.8cqw;display:flex;justify-content:space-between;font-size:1.05cqw;color:var(--muted);border-top:.12cqw solid var(--line);padding-top:.9cqw}
+.slide .eyebrow{font-size:1.2cqw;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);font-weight:700}
+.slide h2{margin:0;font-size:3cqw;line-height:1.1}
+.slide.capa{background:var(--dark);color:#fff}
+.slide.capa .logo{width:22cqw}
+.slide.capa h1{margin:0;font-size:7.2cqw;line-height:1;letter-spacing:-.02em}
+.slide.capa .mes{font-size:3.4cqw;color:var(--lime);font-weight:600}
+.slide.capa .sub{font-size:1.5cqw;color:#a9cfcc}
+.slide .deco{position:absolute;right:-6cqw;top:-6cqw;width:46cqw;height:46cqw;border-radius:50%;background:var(--accent);opacity:.95}
+.slide .deco2{position:absolute;right:20cqw;bottom:-14cqw;width:28cqw;height:28cqw;border-radius:50%;background:var(--lime);opacity:.9}
+.slide .deco3{position:absolute;right:6cqw;bottom:6cqw;width:14cqw;height:14cqw;border-radius:50%;background:var(--mid)}
+.sum{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:1.2cqw 3cqw}
+.sum li{display:flex;align-items:center;gap:1.4cqw;padding:1.3cqw 1.6cqw;border-radius:1cqw;background:var(--soft);font-size:1.6cqw}
+.sum li .n{width:3.4cqw;height:3.4cqw;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:1.4cqw;flex:none}
+.sum li b{display:block}
+.sum li small{display:block;font-size:1.15cqw;color:var(--muted)}
+.sum li .pg{margin-left:auto;font-weight:700;color:var(--muted)}
+.slide.ccapa .band{position:absolute;left:0;top:0;bottom:0;width:2.2cqw;background:var(--c)}
+.slide.ccapa h2{font-size:5cqw;margin-top:auto}
+.ccinfo{display:grid;grid-template-columns:1.4fr 1fr;gap:2.4cqw;margin-bottom:1cqw}
+.ccinfo .box{background:var(--soft);border-radius:1.2cqw;padding:1.6cqw 1.8cqw;font-size:1.45cqw;line-height:1.4}
+.ccinfo .box dt{font-size:1.05cqw;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-top:.8cqw}
+.ccinfo .box dt:first-child{margin-top:0}
+.ccinfo .box dd{margin:.2cqw 0 0}
+.ccnums{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2cqw}
+.ccnums div{background:var(--c);color:#fff;border-radius:1.2cqw;padding:1.4cqw}
+.ccnums b{display:block;font-size:3cqw;line-height:1}
+.ccnums span{font-size:1.15cqw;opacity:.9}
+.ogrid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1.6cqw;flex:1;min-height:0}
+.ocard{display:grid;grid-template-columns:40% 1fr;border:.12cqw solid var(--line);border-radius:1.2cqw;overflow:hidden;min-height:0;background:#fff}
+.ocard .oimg{position:relative;background:color-mix(in srgb,var(--c) 14%,#fff);display:grid;place-items:center;overflow:hidden}
+.ocard .oimg img{width:100%;height:100%;object-fit:cover}
+.ocard .oimg .ph{font-size:5cqw;color:var(--c)}
+.ocard .oimg.ceu{background:linear-gradient(#bfe6ee,#eaf6ef 70%,#cfe3b5 70%)}
+.ocard .bb{width:88%;position:relative;margin-bottom:3cqw}
+.ocard .bb img{width:100%;height:auto;display:block;border:.35cqw solid #263238;border-radius:.3cqw;box-shadow:0 .4cqw .8cqw rgba(0,0,0,.2)}
+.ocard .bb::after{content:"";position:absolute;left:22%;right:22%;top:100%;height:3.2cqw;background:linear-gradient(90deg,#455a64 0 9%,transparent 9% 91%,#455a64 91%)}
+.ocard .oimg svg{width:100%;height:100%}
+.ocard .otag{position:absolute;right:.8cqw;top:.8cqw;background:var(--c);color:#fff;font-size:1cqw;font-weight:700;padding:.3cqw .8cqw;border-radius:2cqw}
+.ocard .ob{padding:1.2cqw 1.4cqw;display:flex;flex-direction:column;gap:.5cqw;min-width:0;overflow:hidden}
+.ocard .ob b{font-size:1.45cqw;line-height:1.2;flex:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ocard .ob small,.ocard dl{flex:none}
+.ocard .ob small{font-size:1.05cqw;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ocard dl{margin:.4cqw 0 0;display:grid;grid-template-columns:auto 1fr;gap:.45cqw 1cqw;font-size:1.08cqw;line-height:1.3}
+.ocard dt{color:var(--muted);font-weight:700;text-transform:uppercase;font-size:.9cqw;letter-spacing:.05em;padding-top:.15cqw}
+.ocard dd{margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ocard .canal{display:inline-flex;gap:.5cqw;align-items:center}
+.ocard .canal i{width:.9cqw;height:.9cqw;border-radius:50%;background:var(--c)}
+.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4cqw}
+.rgrid div{background:var(--soft);border-radius:1.2cqw;padding:1.6cqw}
+.rgrid b{display:block;font-size:3cqw;color:var(--dark);line-height:1.05}
+.rgrid span{font-size:1.15cqw;color:var(--muted)}
+.rbars{display:flex;flex-direction:column;gap:1cqw;font-size:1.3cqw}
+.rbars .t{height:1.2cqw;background:var(--soft);border-radius:1cqw;overflow:hidden}
+.rbars .t i{display:block;height:100%;border-radius:1cqw}
+.exnote{font-size:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:999px;padding:3px 10px}
+@media print{
+  @page{size:297mm 167.06mm;margin:0}
+  body{background:#fff}
+  html,body{margin:0!important;padding:0!important;background:#fff}
+  .app,#toast,#drawerRoot,#modalRoot{display:none!important}
+  #printRoot{display:block!important}
+  .slide{max-width:none;width:297mm;height:166.5mm;aspect-ratio:auto;border-radius:0;box-shadow:none;break-after:page;page-break-after:always;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .slide .in,.slide .sf{zoom:1}
+}
 @media (max-width:900px){
   .app{flex-direction:column}
   .side{width:auto;height:auto;position:static;flex-direction:row;overflow-x:auto;padding:10px;gap:4px;align-items:center}
@@ -267,7 +340,7 @@ const money=n=>(Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:
 const num=n=>(Number(n)||0).toLocaleString('pt-BR');
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const URLS={};
-const blobUrl=id=>MODO==='supabase'?(URLS[id]||''):'/_blob/'+encodeURIComponent(id);
+const blobUrl=id=>String(id).startsWith('data:')?id:(MODO==='supabase'?(URLS[id]||''):'/_blob/'+encodeURIComponent(id));
 const clone=o=>JSON.parse(JSON.stringify(o||{}));
 const MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const DOW=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -367,6 +440,7 @@ function veiculacoes(){
     (o.historico||[]).forEach(h=>v.push({tipo:'outdoor',valor:Number(h.valor)||0,campanhaId:h.campanhaId,inicio:h.inicio,fim:h.fim,nome:o.codigo||o.endereco,cidade:o.cidade,peca:h.peca,hist:true}));
   });
   S.data.radios.forEach(r=>v.push({tipo:'radio',valor:Number(r.valor)||0,campanhaId:r.campanhaId,inicio:r.inicio,fim:r.fim,nome:r.nome,cidade:r.cidades,peca:r.spot}));
+  S.data.posts.forEach(p=>{if(Number(p.valor)>0&&p.dataHora&&TIPOS[p.rede]){const d=p.dataHora.slice(0,10);v.push({tipo:p.rede,valor:Number(p.valor),campanhaId:p.campanhaId,inicio:d,fim:d,nome:TIPOS[p.rede].label+' · '+(p.formato||'post'),cidade:'',peca:(p.legenda||'').slice(0,60)});}});
   return v;
 }
 function cidadesDe(str){return String(str||'').split(/[,;]/).map(s=>s.trim()).filter(Boolean);}
@@ -396,6 +470,7 @@ const SCHEMAS={
     {k:'nome',l:'Nome da campanha',t:'text',req:1},
     {k:'cor',l:'Cor de identificação',t:'color',def:'#00AE9D'},
     {k:'objetivo',l:'Objetivo',t:'textarea',full:1},
+    {k:'publico',l:'Público-alvo',t:'text',full:1},
     {k:'inicio',l:'Início',t:'date'},{k:'fim',l:'Fim',t:'date'},
     {k:'verba',l:'Verba prevista (R$)',t:'money'},
     {k:'pecas',l:'Peças / criativos',t:'files',multi:1,accept:'image/*,video/*,audio/*,application/pdf',full:1,help:'Imagens, vídeos, áudios ou PDFs da campanha.'}
@@ -415,6 +490,8 @@ const SCHEMAS={
     {k:'inicio',l:'Início da veiculação',t:'date'},
     {k:'fim',l:'Fim da veiculação',t:'date',help:'Ao informar o início, o fim é sugerido para 1 bissemana (14 dias).'},
     {k:'arte',l:'Arte exposta',t:'files',accept:'image/*,application/pdf',full:1},
+    {k:'objetivo',l:'Objetivo desta veiculação',t:'text',full:1,help:'Em branco, usa o objetivo da campanha.'},
+    {k:'publicoAlvo',l:'Público-alvo',t:'text',full:1,help:'Ex.: fluxo de ≈ 35 mil veículos/dia. Em branco, usa o da campanha.'},
     {sec:'Investimento'},
     {k:'tipoValor',l:'Forma de pagamento',t:'select',opts:()=>TIPO_VALOR,def:'periodo'},
     {k:'valor',l:'Valor (R$)',t:'money'},
@@ -441,6 +518,8 @@ const SCHEMAS={
     {k:'audio',l:'Áudio do spot',t:'files',accept:'audio/*',full:1},
     {k:'insercoes',l:'Inserções por dia',t:'number'},
     {k:'horarios',l:'Horários',t:'text',help:'Ex.: 7h, 12h, 18h'},
+    {k:'objetivo',l:'Objetivo desta veiculação',t:'text',full:1,help:'Em branco, usa o objetivo da campanha.'},
+    {k:'publicoAlvo',l:'Público-alvo',t:'text',full:1,help:'Em branco, usa o público estimado da rádio.'},
     {k:'obs',l:'Observações',t:'textarea',full:1}
   ]},
   posts:{titulo:'Post',fields:[
@@ -450,8 +529,11 @@ const SCHEMAS={
     {k:'status',l:'Status',t:'select',opts:()=>[['rascunho','Rascunho'],['agendado','Agendado'],['publicado','Publicado']],def:'rascunho'},
     {k:'campanhaId',l:'Campanha',t:'select',opts:optCamp},
     {k:'link',l:'Link do post publicado',t:'text'},
+    {k:'valor',l:'Investimento em impulsionamento (R$)',t:'money'},
     {k:'legenda',l:'Legenda / texto',t:'textarea',full:1},
     {k:'hashtags',l:'Hashtags / menções',t:'text',full:1},
+    {k:'objetivo',l:'Objetivo do post',t:'text',help:'Em branco, usa o objetivo da campanha.'},
+    {k:'publicoAlvo',l:'Público-alvo',t:'text',help:'Em branco, usa o da campanha.'},
     {k:'midia',l:'Mídia (imagem ou vídeo)',t:'files',multi:1,accept:'image/*,video/*',full:1},
     {sec:'Resultados',show:['status','publicado']},
     {k:'alcance',l:'Alcance',t:'number',show:['status','publicado']},
@@ -468,6 +550,7 @@ const VIEWS={
   dashboard:{t:'Painel geral',s:'Investimentos, mídias ativas e alertas em um só lugar.',ic:'◧'},
   calendario:{t:'Calendário',s:'Todas as mídias em veiculação. Clique em um dia para ver ou adicionar.',ic:'▦'},
   campanhas:{t:'Campanhas',s:'Toda mídia se liga a uma campanha.',ic:'◆'},
+  observatorio:{t:'Observatório Digital',s:'Relatório mensal em formato de apresentação, montado com os dados do sistema.',ic:'◩'},
   outdoor:{t:'Outdoor',s:'Pontos, veiculações, peças e contratos.',ic:'▣',dot:'outdoor'},
   radio:{t:'Rádio',s:'Emissoras, abrangência, spots e vigência.',ic:'◉',dot:'radio'},
   integracoes:{t:'Integrações',s:'Dados das redes sociais conectadas, dentro do sistema.',ic:'⇄'},
@@ -480,7 +563,7 @@ function renderSide(){
   const ao=al.filter(a=>a.tipo==='outdoor').length, ar=al.filter(a=>a.tipo==='radio').length;
   const item=(k,badge)=>{const v=VIEWS[k];return '<a class="nav'+(S.view===k?' on':'')+'" href="#'+k+'">'+(v.dot?'<i class="dot" style="background:'+TIPOS[v.dot].cor+'"></i>':'<span class="ic">'+v.ic+'</span>')+'<span>'+v.t+'</span>'+(badge?'<span class="badge">'+badge+'</span>':'')+'</a>';};
   $('#side').innerHTML='<div class="brand"><img class="logoimg" src="'+LOGO+'" alt="Sicoob Credimepi"><small>Gestão de Mídias</small></div>'+
-    item('dashboard',al.length)+item('calendario')+item('campanhas')+
+    item('dashboard',al.length)+item('calendario')+item('campanhas')+item('observatorio')+
     '<div class="navsec">Mídia offline</div>'+item('outdoor',ao)+item('radio',ar)+
     '<div class="navsec">Mídias sociais</div>'+item('integracoes')+item('instagram')+item('linkedin')+item('facebook')+(MODO==='supabase'?'<span style="flex:1"></span><button class="nav" data-act="sair"><span class="ic">⎋</span><span>Sair</span></button>':'');
 }
@@ -525,8 +608,8 @@ RENDER.dashboard=function(){
   const prox=S.data.posts.filter(p=>p.dataHora&&p.dataHora.slice(0,10)>=t&&p.status!=='publicado').sort((a,b)=>a.dataHora.localeCompare(b.dataHora));
   const prox7=prox.filter(p=>diffDays(t,p.dataHora.slice(0,10))<=7);
   $('#topActions').innerHTML='<button class="btn" data-act="export-geral">⬇ Relatório geral (Excel/CSV)</button><button class="btn pri" data-act="novo-escolha">+ Nova mídia</button>';
-  const porTipo={outdoor:0,radio:0}; v.forEach(x=>porTipo[x.tipo]+=x.valor);
-  const maxT=Math.max(1,porTipo.outdoor,porTipo.radio);
+  const porTipo={}; Object.keys(TIPOS).forEach(k=>porTipo[k]=0); v.forEach(x=>porTipo[x.tipo]+=x.valor);
+  const maxT=Math.max(1,...Object.values(porTipo));
   const camps=S.data.campanhas.map(c=>({c,real:v.filter(x=>x.campanhaId===c.id).reduce((s,x)=>s+x.valor,0),prev:Number(c.verba)||0})).sort((a,b)=>b.real-a.real);
   const maxC=Math.max(1,...camps.map(x=>Math.max(x.real,x.prev)));
   const vazio=!S.data.outdoors.length&&!S.data.radios.length&&!S.data.posts.length&&!S.data.campanhas.length;
@@ -544,8 +627,8 @@ RENDER.dashboard=function(){
   h+='<div class="card"><div class="card-h"><h3>Próximas publicações</h3><a href="#calendario" class="small">ver calendário</a></div>'+(prox.length?'<div class="alist">'+prox.slice(0,8).map(p=>'<div class="arow" data-open="posts:'+p.id+'"><i class="sw" style="background:'+TIPOS[p.rede].cor+'"></i><div class="ti"><b>'+esc((p.formato?p.formato+' · ':'')+(p.legenda||'(sem legenda)'))+'</b><span>'+TIPOS[p.rede].label+' · '+fmtDT(p.dataHora)+(p.campanhaId?' · '+esc(campNome(p.campanhaId)):'')+'</span></div><span class="pill '+esc(p.status)+'">'+esc(p.status||'')+'</span></div>').join('')+'</div>':'<div class="empty">Nenhum post programado.</div>')+'</div>';
   h+='</div><div class="two" style="margin-top:14px">';
   h+='<div class="card"><div class="card-h"><h3>Investimento por tipo de mídia</h3></div><div class="card-b bars">'+
-    ['outdoor','radio'].map(k=>'<div class="bar"><div class="bl"><span class="tag"><i style="background:'+TIPOS[k].cor+'"></i>'+TIPOS[k].label+'</span><b>'+money(porTipo[k])+'</b></div><div class="track"><div class="fill" style="width:'+(porTipo[k]/maxT*100)+'%;background:'+TIPOS[k].cor+'"></div></div></div>').join('')+
-    '<div class="small muted">Redes sociais não entram no investimento porque os posts orgânicos não têm valor cadastrado.</div></div></div>';
+    Object.keys(TIPOS).filter(k=>porTipo[k]>0||k==='outdoor'||k==='radio').map(k=>'<div class="bar"><div class="bl"><span class="tag"><i style="background:'+TIPOS[k].cor+'"></i>'+TIPOS[k].label+'</span><b>'+money(porTipo[k])+'</b></div><div class="track"><div class="fill" style="width:'+(porTipo[k]/maxT*100)+'%;background:'+TIPOS[k].cor+'"></div></div></div>').join('')+
+    '<div class="small muted">Nas redes sociais, conta o valor investido em impulsionamento de cada post.</div></div></div>';
   h+='<div class="card"><div class="card-h"><h3>Investimento por campanha</h3><span class="small muted">barra = realizado · traço = verba prevista</span></div><div class="card-b bars">'+
     (camps.length?camps.slice(0,8).map(x=>'<div class="bar"><div class="bl"><span class="tag"><i style="background:'+esc(x.c.cor||'#94a3b8')+'"></i>'+esc(x.c.nome)+'</span><b>'+money(x.real)+(x.prev?' <span class="muted" style="font-weight:400">de '+money(x.prev)+'</span>':'')+'</b></div><div class="track"><div class="fill" style="width:'+(x.real/maxC*100)+'%;background:'+(x.prev&&x.real>x.prev?'var(--bad)':esc(x.c.cor||'#94a3b8'))+'"></div>'+(x.prev?'<div class="mark" style="left:calc('+(x.prev/maxC*100)+'% - 1px)"></div>':'')+'</div></div>').join(''):'<div class="empty">Nenhuma campanha cadastrada.</div>')+
   '</div></div>';
@@ -632,11 +715,229 @@ RENDER.campanhas=function(){
     return '<div class="card camp" style="--c:'+esc(c.cor||'#94a3b8')+'" data-open="campanhas:'+c.id+'"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><h3>'+esc(c.nome)+'</h3>'+(c.inicio?pill(st):'')+'</div><div class="small muted">'+fmtD(c.inicio)+' a '+fmtD(c.fim)+'</div>'+
       (c.objetivo?'<div class="small" style="margin-top:8px">'+esc(c.objetivo.slice(0,140))+'</div>':'')+
       '<div class="bar" style="margin-top:12px"><div class="bl"><span>Realizado</span><b>'+money(real)+(prev?' / '+money(prev):'')+'</b></div><div class="track"><div class="fill" style="width:'+(prev?pct:(real?100:0))+'%;background:'+(prev&&real>prev?'var(--bad)':esc(c.cor||'#94a3b8'))+'"></div></div></div>'+
-      '<div class="meta"><span>▣ '+nO+' outdoor</span><span>◉ '+nR+' rádio</span><span>◎ '+nP+' posts</span><span>📎 '+(c.pecas||[]).length+' peças</span></div>'+
+      '<div class="meta"><span>▣ '+nO+' outdoor</span><span>◉ '+nR+' rádio</span><span>◎ '+nP+' posts</span><span>📎 '+(c.pecas||[]).length+((c.pecas||[]).length===1?' peça':' peças')+'</span></div>'+
       (imgs.length?'<div class="thumbs">'+imgs.map(f=>'<img src="'+blobUrl(f.id)+'" alt="">').join('')+'</div>':'')+
     '</div>';
   }).join('')+'</div>';
 };
+
+/* ---------- OBSERVATÓRIO DIGITAL ---------- */
+S.obsMes=today().slice(0,7);
+function mesInfo(m){const p=m.split('-').map(Number);return {ini:m+'-01',fim:ymd(new Date(p[0],p[1],0)),nome:MESES[p[1]-1],ano:p[0]};}
+function sobrepoe(a,b,ini,fim){if(!a) return 0;b=b||a;const s=a>ini?a:ini,e=b<fim?b:fim;return e>=s?diffDays(s,e)+1:0;}
+function midiasDoMes(m){
+  const M=mesInfo(m), out=[];
+  const outd=(o,src,d)=>{const b=Math.max(1,Math.ceil(d/14));out.push({tipo:'outdoor',campanhaId:src.campanhaId,titulo:src.peca||'Outdoor',local:[o.codigo,o.endereco,o.cidade].filter(Boolean).join(' · '),img:(src.arte||[])[0]||(o.foto||[])[0],inicio:src.inicio,fim:src.fim,valor:Number(src.valor)||0,qtd:'1 ponto · '+b+' bissemana'+(b>1?'s':''),objetivo:src.objetivo||o.objetivo,publico:src.publicoAlvo||o.publicoAlvo,ref:'outdoors:'+o.id});};
+  S.data.outdoors.forEach(o=>{const d=sobrepoe(o.inicio,o.fim,M.ini,M.fim);if(d) outd(o,o,d);(o.historico||[]).forEach(h=>{const d2=sobrepoe(h.inicio,h.fim,M.ini,M.fim);if(d2) outd(o,h,d2);});});
+  S.data.radios.forEach(r=>{const d=sobrepoe(r.inicio,r.fim,M.ini,M.fim);if(!d) return;const ins=(Number(r.insercoes)||0)*d;
+    out.push({tipo:'radio',campanhaId:r.campanhaId,titulo:r.spot||r.nome,local:[r.nome,r.frequencia,cidadesDe(r.cidades).join(', ')].filter(Boolean).join(' · '),img:null,inicio:r.inicio,fim:r.fim,valor:Number(r.valor)||0,qtd:ins?num(ins)+' inserções no mês ('+r.insercoes+'/dia)':d+' dias no ar',objetivo:r.objetivo,publico:r.publicoAlvo||(r.publico?'≈ '+num(r.publico)+' ouvintes':''),ref:'radios:'+r.id});});
+  S.data.posts.forEach(p=>{if(!p.dataHora) return;const d=p.dataHora.slice(0,10);if(d<M.ini||d>M.fim) return;
+    out.push({tipo:p.rede,campanhaId:p.campanhaId,titulo:(p.legenda||'(sem legenda)').split('\n')[0].slice(0,80),local:(p.formato||'Post')+' · '+fmtDT(p.dataHora)+' · '+(p.status||''),img:(p.midia||[]).find(x=>/^image\//.test(x.tipo||'')),inicio:d,fim:d,valor:Number(p.valor)||0,qtd:'1 '+(p.formato||'post').toLowerCase()+(p.alcance?' · '+num(p.alcance)+' de alcance':'')+(p.curtidas?' · '+num(p.curtidas)+' curtidas':''),objetivo:p.objetivo,publico:p.publicoAlvo,alcance:Number(p.alcance)||0,ref:'posts:'+p.id});});
+  return out;
+}
+const ICON={outdoor:'▣',radio:'◉',instagram:'◎',linkedin:'in',facebook:'f'};
+function oCard(x){
+  const c=campanha(x.campanhaId)||{}, T=TIPOS[x.tipo];
+  const off=x.tipo==='outdoor'||x.tipo==='radio';
+  const temImg=x.img&&/^image\//.test(x.img.tipo||'');
+  let img, cls='oimg';
+  if(x.tipo==='outdoor'&&temImg){ cls+=' ceu'; img='<div class="bb"><img src="'+blobUrl(x.img.id)+'" alt=""></div>'; }
+  else if(temImg) img='<img src="'+blobUrl(x.img.id)+'" alt="">';
+  else if(x.tipo==='radio') img=radioSVG(x.titulo);
+  else img='<span class="ph">'+ICON[x.tipo]+'</span>';
+  return '<div class="ocard" style="--c:'+T.cor+'" data-open="'+x.ref+'"><div class="'+cls+'">'+img+'<span class="otag">'+T.label+'</span></div><div class="ob"><b>'+esc(x.titulo)+'</b><small>'+esc(x.local)+'</small><dl>'+
+    '<dt>Objetivo</dt><dd>'+esc(x.objetivo||c.objetivo||'—')+'</dd>'+
+    '<dt>Público</dt><dd>'+esc(x.publico||c.publico||'—')+'</dd>'+
+    '<dt>Quantidade</dt><dd>'+esc(x.qtd)+'</dd>'+
+    '<dt>Canal</dt><dd><span class="canal"><i></i>'+(off?'Mídia offline':'Mídias sociais')+' · '+T.label+'</span></dd>'+
+    (x.valor?'<dt>Investimento</dt><dd>'+money(x.valor)+'</dd>':'')+
+  '</dl></div></div>';
+}
+function radioSVG(t){
+  const w=t.length>22?t.slice(0,22)+'…':t;
+  return '<svg viewBox="0 0 300 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a2870"/><stop offset="1" stop-color="#49479D"/></linearGradient></defs><rect width="300" height="300" fill="url(#rg)"/>'+
+  [60,90,120].map((r,i)=>'<path d="M'+(150-r)+' 140 A'+r+' '+r+' 0 0 1 '+(150+r)+' 140" stroke="#C9D200" stroke-width="7" fill="none" opacity="'+(.9-i*.25)+'" stroke-linecap="round"/>').join('')+
+  '<rect x="105" y="125" width="90" height="62" rx="12" fill="#00AE9D"/><circle cx="130" cy="156" r="16" fill="#003641"/><circle cx="130" cy="156" r="6" fill="#C9D200"/><rect x="155" y="142" width="30" height="6" rx="3" fill="#003641"/><rect x="155" y="156" width="30" height="6" rx="3" fill="#003641"/><rect x="155" y="170" width="20" height="6" rx="3" fill="#003641"/><line x1="170" y1="125" x2="190" y2="95" stroke="#00AE9D" stroke-width="5" stroke-linecap="round"/>'+
+  '<rect y="232" width="300" height="68" fill="#003641"/><text x="150" y="262" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="700" fill="#fff">'+esc(w)+'</text><text x="150" y="284" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#00AE9D">SICOOB Credimepi</text></svg>';
+}
+RENDER.observatorio=function(){
+  const m=S.obsMes, M=mesInfo(m), mesLabel=M.nome.charAt(0).toUpperCase()+M.nome.slice(1)+' de '+M.ano;
+  const temEx=COLS.some(c=>S.data[c].some(r=>r.exemplo));
+  $('#topActions').innerHTML=(MODO==='claude'?'':'<button class="btn pri" data-act="imprimir">⬇ Exportar PDF</button>');
+  const mids=midiasDoMes(m);
+  const grupos=[];const byC={};
+  mids.forEach(x=>{const k=x.campanhaId&&campanha(x.campanhaId)?x.campanhaId:'_';if(!byC[k]){byC[k]={id:k,c:campanha(k)||{nome:'Sem campanha',cor:'#94a3b8'},itens:[]};grupos.push(byC[k]);}byC[k].itens.push(x);});
+  grupos.sort((a,b)=>a.id==='_'?1:b.id==='_'?-1:(a.c.inicio||'').localeCompare(b.c.inicio||''));
+  let h='<div class="obsbar"><label class="small muted" for="obsMes"><b>Mês de referência</b></label><input type="month" class="inp" id="obsMes" value="'+m+'">'+
+    (temEx?'<span class="exnote">Inclui dados de exemplo</span><button class="btn sm" data-act="rm-exemplos">Remover exemplos</button>':'<button class="btn sm" data-act="exemplos">Carregar dados de exemplo</button>')+
+    '<span class="small muted" style="margin-left:auto">'+grupos.length+' campanha(s) · '+mids.length+' mídia(s) no período</span></div>';
+  const slides=[];
+  const foot=()=> '<div class="sf"><span>Observatório Digital · '+mesLabel+'</span><span>Sicoob Credimepi · '+(slides.length+1)+'</span></div>';
+  slides.push('<section class="slide capa"><div class="deco"></div><div class="deco2"></div><div class="deco3"></div><div class="in"><img class="logo" src="'+LOGO+'" alt="Sicoob Credimepi"><div style="margin-top:auto;position:relative"><div class="sub" style="text-transform:uppercase;letter-spacing:.14em;margin-bottom:1.2cqw">Relatório mensal de mídias</div><h1>Observatório<br>Digital</h1><div class="mes" style="margin-top:1.4cqw">'+mesLabel+'</div><div class="sub" style="margin-top:1cqw">'+grupos.length+' campanha'+(grupos.length===1?'':'s')+' · '+mids.length+' mídia'+(mids.length===1?'':'s')+' veiculada'+(mids.length===1?'':'s')+'</div></div></div></section>');
+  if(!mids.length){
+    slides.push('<section class="slide"><div class="in"><div class="eyebrow">Sumário</div><h2>Nenhuma mídia veiculada neste mês</h2><p style="font-size:1.6cqw;color:var(--muted)">Escolha outro mês ou cadastre outdoors, rádios e posts com datas dentro do período.</p></div>'+foot()+'</section>');
+  }else{
+    const POR=4; let pg=3; const pags=grupos.map(g=>{const p=pg;pg+=1+Math.ceil(g.itens.length/POR);return p;});
+    slides.push('<section class="slide"><div class="in"><div class="eyebrow">Sumário</div><h2>Campanhas do mês</h2><ol class="sum">'+grupos.map((g,i)=>'<li><span class="n" style="background:'+esc(g.c.cor||'#94a3b8')+'">'+(i+1)+'</span><span><b>'+esc(g.c.nome)+'</b><small>'+g.itens.length+' mídia'+(g.itens.length>1?'s':'')+' · '+Array.from(new Set(g.itens.map(x=>TIPOS[x.tipo].label))).join(', ')+'</small></span><span class="pg">p. '+pags[i]+'</span></li>').join('')+'<li><span class="n" style="background:var(--dark)">'+(grupos.length+1)+'</span><span><b>Resumo do mês</b><small>Investimento e alcance</small></span><span class="pg">p. '+pg+'</span></li></ol></div>'+foot()+'</section>');
+    grupos.forEach((g,gi)=>{
+      const c=g.c, cor=esc(c.cor||'#94a3b8');
+      const nOff=g.itens.filter(x=>x.tipo==='outdoor'||x.tipo==='radio').length, nSoc=g.itens.length-nOff;
+      const inv=g.itens.reduce((s,x)=>s+x.valor,0);
+      slides.push('<section class="slide ccapa" style="--c:'+cor+'"><div class="band"></div><div class="in"><div class="eyebrow" style="color:'+cor+'">Campanha '+(gi+1)+' de '+grupos.length+'</div><h2>'+esc(c.nome)+'</h2><div class="small" style="font-size:1.5cqw;color:var(--muted);margin-top:-.6cqw">'+(c.inicio?fmtD(c.inicio)+' a '+fmtD(c.fim):'Mídias sem campanha vinculada')+'</div>'+
+        '<div class="ccinfo"><dl class="box"><dt>Objetivo</dt><dd>'+esc(c.objetivo||'—')+'</dd><dt>Público</dt><dd>'+esc(c.publico||'—')+'</dd>'+(c.verba?'<dt>Verba prevista</dt><dd>'+money(c.verba)+'</dd>':'')+'</dl><div class="ccnums"><div><b>'+g.itens.length+'</b><span>mídias no mês</span></div><div><b>'+nOff+'</b><span>mídia offline</span></div><div><b>'+nSoc+'</b><span>mídias sociais</span></div><div style="grid-column:1/-1;background:var(--dark)"><b>'+money(inv)+'</b><span>investido no período</span></div></div></div></div>'+foot()+'</section>');
+      for(let i=0;i<g.itens.length;i+=POR){
+        const parte=g.itens.slice(i,i+POR);
+        slides.push('<section class="slide" style="--c:'+cor+'"><div class="in"><div style="display:flex;align-items:baseline;justify-content:space-between;gap:2cqw"><div><div class="eyebrow" style="color:'+cor+'">'+esc(c.nome)+'</div><h2 style="font-size:2.4cqw">Mídias veiculadas</h2></div><span style="font-size:1.2cqw;color:var(--muted)">'+(i+1)+'–'+(i+parte.length)+' de '+g.itens.length+'</span></div><div class="ogrid">'+parte.map(oCard).join('')+'</div></div>'+foot()+'</section>');
+      }
+    });
+    const inv=mids.reduce((s,x)=>s+x.valor,0), alc=mids.reduce((s,x)=>s+(x.alcance||0),0);
+    const porTipo=Object.keys(TIPOS).map(k=>({k,n:mids.filter(x=>x.tipo===k).length})).filter(x=>x.n);
+    const maxN=Math.max(1,...porTipo.map(x=>x.n));
+    slides.push('<section class="slide"><div class="in"><div class="eyebrow">Resumo do mês</div><h2>Visão geral de '+mesLabel+'</h2><div class="rgrid"><div><b>'+grupos.length+'</b><span>campanhas ativas</span></div><div><b>'+mids.length+'</b><span>mídias veiculadas</span></div><div><b>'+money(inv)+'</b><span>investimento total no mês</span></div><div><b>'+num(alc)+'</b><span>alcance somado dos posts</span></div></div><div class="rbars" style="margin-top:1cqw">'+porTipo.map(x=>'<div><div style="display:flex;justify-content:space-between"><span>'+TIPOS[x.k].label+'</span><b>'+x.n+'</b></div><div class="t"><i style="width:'+(x.n/maxN*100)+'%;background:'+TIPOS[x.k].cor+'"></i></div></div>').join('')+'</div></div>'+foot()+'</section>');
+  }
+  h+='<div class="deck">'+slides.join('')+'</div>';
+  $('#view').innerHTML=h;
+  $('#obsMes').onchange=e=>{if(e.target.value){S.obsMes=e.target.value;RENDER.observatorio();}};
+};
+
+/* ---------- dados de exemplo ---------- */
+const PELE=['#f1c7a5','#e0ac85','#c68863','#8d5a3b','#5c3a24','#f5d6bd'];
+const CABELO=['#2b1b12','#4a2c1a','#111','#7a4a24','#b9874a','#3a2a20','#9a9a9a'];
+function pessoaSVG(cx,base,s,o){
+  const r=s*.11, hy=base-s*.74, sk=o.pele, hr=o.cabelo, rp=o.roupa;
+  let g='';
+  if(o.longo) g+="<rect x='"+(cx-r*1.15)+"' y='"+(hy-r*.2)+"' width='"+(r*2.3)+"' height='"+(r*2.3)+"' rx='"+(r*.9)+"' fill='"+hr+"'/>";
+  g+="<path d='M"+(cx-s*.23)+" "+base+" L"+(cx-s*.23)+" "+(base-s*.38)+" Q"+(cx-s*.23)+" "+(base-s*.6)+" "+cx+" "+(base-s*.6)+" Q"+(cx+s*.23)+" "+(base-s*.6)+" "+(cx+s*.23)+" "+(base-s*.38)+" L"+(cx+s*.23)+" "+base+" Z' fill='"+rp+"'/>";
+  if(o.gola) g+="<path d='M"+(cx-s*.06)+" "+(base-s*.6)+" L"+cx+" "+(base-s*.5)+" L"+(cx+s*.06)+" "+(base-s*.6)+" Z' fill='#fff' opacity='.9'/>";
+  g+="<rect x='"+(cx-s*.045)+"' y='"+(hy+r*.6)+"' width='"+(s*.09)+"' height='"+(s*.09)+"' fill='"+sk+"'/>";
+  g+="<circle cx='"+cx+"' cy='"+hy+"' r='"+r+"' fill='"+sk+"'/>";
+  g+="<path d='M"+(cx-r*1.04)+" "+(hy+r*.05)+" A"+(r*1.04)+" "+(r*1.04)+" 0 0 1 "+(cx+r*1.04)+" "+(hy+r*.05)+" Q"+(cx+r*.5)+" "+(hy-r*.45)+" "+(cx-r*.1)+" "+(hy-r*.38)+" Q"+(cx-r*.7)+" "+(hy-r*.3)+" "+(cx-r*1.04)+" "+(hy+r*.05)+" Z' fill='"+hr+"'/>";
+  g+="<circle cx='"+(cx-r*.38)+"' cy='"+(hy+r*.05)+"' r='"+(r*.09)+"' fill='#2b1b12'/><circle cx='"+(cx+r*.38)+"' cy='"+(hy+r*.05)+"' r='"+(r*.09)+"' fill='#2b1b12'/>";
+  g+="<path d='M"+(cx-r*.35)+" "+(hy+r*.4)+" Q"+cx+" "+(hy+r*.72)+" "+(cx+r*.35)+" "+(hy+r*.4)+"' stroke='#7a3b2a' stroke-width='"+(r*.1)+"' fill='none' stroke-linecap='round'/>";
+  if(o.chapeu) g+="<ellipse cx='"+cx+"' cy='"+(hy-r*.55)+"' rx='"+(r*1.75)+"' ry='"+(r*.32)+"' fill='"+o.chapeu+"'/><rect x='"+(cx-r*.9)+"' y='"+(hy-r*1.35)+"' width='"+(r*1.8)+"' height='"+(r*.85)+"' rx='"+(r*.35)+"' fill='"+o.chapeu+"'/>";
+  if(o.item==='celular') g+="<rect x='"+(cx+s*.1)+"' y='"+(base-s*.48)+"' width='"+(s*.09)+"' height='"+(s*.15)+"' rx='"+(s*.015)+"' fill='#003641' stroke='#fff' stroke-width='"+(s*.008)+"'/><circle cx='"+(cx+s*.12)+"' cy='"+(base-s*.36)+"' r='"+(s*.035)+"' fill='"+sk+"'/>";
+  if(o.item==='cartao') g+="<rect x='"+(cx+s*.06)+"' y='"+(base-s*.46)+"' width='"+(s*.2)+"' height='"+(s*.12)+"' rx='"+(s*.015)+"' fill='#00AE9D' stroke='#fff' stroke-width='"+(s*.008)+"'/><rect x='"+(cx+s*.09)+"' y='"+(base-s*.43)+"' width='"+(s*.04)+"' height='"+(s*.03)+"' fill='#C9D200'/>";
+  if(o.item==='notebook') g+="<path d='M"+(cx-s*.2)+" "+(base-s*.22)+" L"+(cx+s*.2)+" "+(base-s*.22)+" L"+(cx+s*.25)+" "+(base-s*.16)+" L"+(cx-s*.25)+" "+(base-s*.16)+" Z' fill='#cfd8dc'/><rect x='"+(cx-s*.17)+"' y='"+(base-s*.42)+"' width='"+(s*.34)+"' height='"+(s*.2)+"' rx='"+(s*.01)+"' fill='#263238'/><rect x='"+(cx-s*.15)+"' y='"+(base-s*.4)+"' width='"+(s*.3)+"' height='"+(s*.16)+"' fill='#00AE9D' opacity='.6'/>";
+  if(o.item==='casa') g+="<g transform='translate("+(cx+s*.07)+" "+(base-s*.5)+")'><path d='M0 "+(s*.1)+" L"+(s*.1)+" 0 L"+(s*.2)+" "+(s*.1)+" Z' fill='#C9D200'/><rect x='"+(s*.03)+"' y='"+(s*.1)+"' width='"+(s*.14)+"' height='"+(s*.1)+"' fill='#fff'/><rect x='"+(s*.08)+"' y='"+(s*.14)+"' width='"+(s*.04)+"' height='"+(s*.06)+"' fill='#00AE9D'/></g>";
+  return g;
+}
+const CENAS={
+  jovem:[{pele:2,cabelo:0,roupa:'#00AE9D',item:'celular',longo:1},{pele:0,cabelo:4,roupa:'#49479D',item:'cartao'}],
+  casal:[{pele:1,cabelo:1,roupa:'#7DB61C',longo:1},{pele:3,cabelo:2,roupa:'#00AE9D',gola:1,item:'casa'}],
+  agro:[{pele:2,cabelo:3,roupa:'#7DB61C',chapeu:'#d9b36c'},{pele:4,cabelo:2,roupa:'#00695f',chapeu:'#b98d48'}],
+  comunidade:[{pele:4,cabelo:2,roupa:'#49479D'},{pele:0,cabelo:4,roupa:'#00AE9D',longo:1},{pele:2,cabelo:0,roupa:'#7DB61C'}],
+  empresa:[{pele:1,cabelo:5,roupa:'#003641',gola:1,item:'notebook',longo:1},{pele:3,cabelo:2,roupa:'#00AE9D',gola:1}],
+  familia:[{pele:1,cabelo:0,roupa:'#00AE9D'},{pele:2,cabelo:1,roupa:'#49479D',longo:1},{pele:1,cabelo:1,roupa:'#C9D200',crianca:1}],
+  idosos:[{pele:0,cabelo:6,roupa:'#00695f',gola:1},{pele:5,cabelo:6,roupa:'#7DB61C',longo:1}]
+};
+function arteEx(t1,t2,c1,c2,larga,cena){
+  const W=larga?900:600,H=larga?300:600,x=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const band=H*(larga?.17:.13), chao=H-band;
+  let svg="<svg xmlns='http://www.w3.org/2000/svg' width='"+W+"' height='"+H+"' viewBox='0 0 "+W+" "+H+"'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='"+c1+"'/><stop offset='1' stop-color='"+c2+"'/></linearGradient></defs><rect width='100%' height='100%' fill='url(#g)'/>";
+  svg+="<circle cx='"+W*.82+"' cy='"+H*.3+"' r='"+H*.36+"' fill='#fff' opacity='.12'/><circle cx='"+W*.6+"' cy='"+H*.08+"' r='"+H*.12+"' fill='#C9D200' opacity='.35'/><path d='M"+W*.55+" "+chao+" L"+W*.78+" "+(chao-H*.22)+" L"+W+" "+chao+" Z' fill='#fff' opacity='.08'/>";
+  const ps=(CENAS[cena]||CENAS.jovem);
+  const area0=larga?W*.55:W*.12, area1=larga?W*.97:W*.88, n=ps.length;
+  const sz=larga?H*.78:H*(n>2?.5:.58);
+  ps.forEach((p,i)=>{const cx=area0+(area1-area0)*(i+.5)/n;const s=p.crianca?sz*.7:sz;svg+=pessoaSVG(cx,chao,s,{pele:PELE[p.pele],cabelo:CABELO[p.cabelo],roupa:p.roupa,longo:p.longo,gola:p.gola,item:p.item,chapeu:p.chapeu});});
+  if(cena==='agro') svg+="<g fill='#C9D200' opacity='.9'>"+[0,1,2,3,4,5].map(i=>"<path d='M"+(W*(larga?.52:.03)+i*W*.025)+" "+chao+" q "+W*.006+" -"+H*.08+" "+W*.012+" 0' />").join('')+"</g>";
+  svg+="<rect y='"+chao+"' width='"+W+"' height='"+band+"' fill='#003641'/><rect y='"+chao+"' width='"+W+"' height='"+H*.012+"' fill='#C9D200'/>";
+  const tx=W*.06, f1=H*(larga?.13:.075), f2=H*(larga?.07:.042);
+  const ty=larga?H*.38:H*.15;
+  svg+="<text x='"+tx+"' y='"+ty+"' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='"+f1+"' fill='#fff'>"+x(t1)+"</text><text x='"+tx+"' y='"+(ty+f2*1.7)+"' font-family='Arial,Helvetica,sans-serif' font-size='"+f2+"' fill='#fff' opacity='.95'>"+x(t2)+"</text>";
+  svg+="<text x='"+tx+"' y='"+(chao+band*.64)+"' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='"+band*.42+"' fill='#fff'>SICOOB <tspan fill='#00AE9D'>Credimepi</tspan></text>";
+  svg+="<path d='M"+(W-band*1.4)+" "+(chao+band*.25)+" l"+band*.5+" 0 l-"+band*.25+" "+band*.5+" Z' fill='#C9D200'/><path d='M"+(W-band*.85)+" "+(chao+band*.25)+" l"+band*.5+" 0 l-"+band*.25+" "+band*.5+" Z' fill='#00AE9D'/>";
+  svg+="</svg>";
+  return [{id:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg),nome:'arte-exemplo.svg',tipo:'image/svg+xml'}];
+}
+function dadosExemplo(){
+  const E={exemplo:true}, f13=d=>addDays(d,13);
+  const C=(id,nome,cor,obj,pub,ini,fim,verba,cena,c1,c2,t2)=>Object.assign({id,nome,cor,objetivo:obj,publico:pub,inicio:ini,fim,verba,pecas:arteEx(nome.split(' – ')[0].split(':')[0],t2,c1,c2,0,cena)},E);
+  const CA=[
+    ['ex-c1','Black Friday Sicoob','#00AE9D','Aumentar a contratação de crédito pessoal e cartões com condições especiais de fim de ano.','Cooperados pessoa física, 25 a 55 anos, Teresina e região.','2026-11-01','2026-11-30',48000,'jovem','#003641','#00AE9D','Crédito com taxas especiais'],
+    ['ex-c2','Safra Forte – Crédito Rural','#7DB61C','Divulgar as linhas de custeio e investimento para a safra 26/27.','Produtores rurais do norte do Piauí e do Maranhão.','2026-08-15','2026-12-15',42000,'agro','#2f5d0a','#7DB61C','Crédito rural do jeito cooperativo'],
+    ['ex-c3','Cooperar é Cuidar','#49479D','Reforçar a marca e os valores do cooperativismo na comunidade.','Comunidade em geral, associados e potenciais cooperados.','2026-08-01','2026-09-30',26000,'comunidade','#2a2870','#49479D','Juntos, fazemos mais'],
+    ['ex-c4','Empreender com o Sicoob','#00695f','Atrair micro e pequenas empresas para a conta PJ e o crédito para capital de giro.','Empreendedores e MEIs de Teresina, Parnaíba e Picos.','2026-09-01','2026-10-31',38000,'empresa','#003641','#00695f','Conta PJ e capital de giro'],
+    ['ex-c5','Previdência: Futuro em Família','#C9A400','Apresentar a previdência privada Sicoob como proteção para a família.','Famílias associadas, 30 a 60 anos.','2026-10-01','2026-11-15',24000,'familia','#00695f','#00AE9D','Planeje hoje o amanhã de quem você ama'],
+    ['ex-c6','Consórcio Casa Própria','#0a7f86','Gerar interesse no consórcio imobiliário com parcelas acessíveis.','Jovens casais e famílias que pagam aluguel.','2026-11-10','2026-12-31',30000,'casal','#003641','#0a7f86','Seu lar começa aqui'],
+    ['ex-c7','Natal Premiado Sicoob','#b5121b','Estimular o uso do cartão e da poupança com sorteio de prêmios de Natal.','Todos os cooperados pessoa física.','2026-12-01','2026-12-31',35000,'familia','#7a0e14','#b5121b','Use seu cartão e concorra a prêmios']
+  ];
+  const c=CA.map(a=>C(...a));
+  const cena={'ex-c1':['jovem','#003641','#00AE9D'],'ex-c2':['agro','#2f5d0a','#7DB61C'],'ex-c3':['comunidade','#2a2870','#49479D'],'ex-c4':['empresa','#003641','#00695f'],'ex-c5':['familia','#00695f','#00AE9D'],'ex-c6':['casal','#003641','#0a7f86'],'ex-c7':['familia','#7a0e14','#b5121b']};
+  const OUT=[
+    ['OUT-001','Av. Frei Serafim, 2280','Teresina','Painel Mídia Exterior','ex-c3','Cooperar é Cuidar – institucional','2026-08-03',4800,'Fluxo de ≈ 35 mil veículos/dia na região central','Cooperar é Cuidar','Juntos, fazemos mais'],
+    ['OUT-020','BR-343, km 12','Campo Maior','Outdoor Norte','ex-c2','Safra Forte – custeio agrícola','2026-08-17',3900,'Produtores e transportadores na rodovia','Safra Forte','Custeio com taxa justa'],
+    ['OUT-060','Praça Félix Pacheco, s/n','Picos','Mídia Sul PI','ex-c3','Cooperar é Cuidar – ações sociais','2026-08-31',3200,'Centro de Picos, alto fluxo de pedestres','Cooperar é Cuidar','Ações na sua cidade'],
+    ['OUT-030','Av. São Sebastião, 1500','Parnaíba','Litoral Mídia','ex-c4','Empreender – conta PJ sem tarifa','2026-09-14',4200,'Centro comercial de Parnaíba','Conta PJ Sicoob','12 meses sem tarifa'],
+    ['OUT-021','Av. Getúlio Vargas, 900','Piripiri','Outdoor Norte','ex-c2','Safra Forte – máquinas e irrigação','2026-09-28',3600,'Entrada da cidade, fluxo rural e urbano','Safra Forte','Máquinas e irrigação'],
+    ['OUT-031','Rua Coelho Rodrigues, 700','Teresina','Painel Mídia Exterior','ex-c4','Empreender – capital de giro','2026-10-12',4600,'Polo comercial do centro de Teresina','Capital de giro','Crédito rápido para empresas'],
+    ['OUT-045','Av. Presidente Kennedy, 2100','Teresina','Painel Mídia Exterior','ex-c5','Previdência – futuro em família','2026-10-26',5000,'Bairros residenciais da zona leste','Previdência Sicoob','Futuro em família'],
+    ['OUT-014','Av. João XXIII, 3500','Teresina','Painel Mídia Exterior','ex-c1','Black Friday – crédito com taxa reduzida','2026-11-03',5200,'Fluxo de ≈ 28 mil veículos/dia, zona leste','Black Friday','Crédito com taxa reduzida'],
+    ['OUT-052','Av. Barão de Gurgueia, 3000','Teresina','Painel Mídia Exterior','ex-c6','Consórcio – sua casa própria','2026-11-17',4900,'Fluxo de ≈ 30 mil veículos/dia, zona sul','Casa própria','Consórcio sem juros'],
+    ['OUT-070','Av. Piauí, 1200','Timon','Mídia Leste MA','ex-c7','Natal Premiado – sorteio de prêmios','2026-12-01',4400,'Principal avenida de Timon','Natal Premiado','Use o cartão e concorra']
+  ];
+  const o=OUT.map((a,i)=>{const s=cena[a[4]];return Object.assign({id:'ex-o'+(i+1),codigo:a[0],endereco:a[1],cidade:a[2],fornecedor:a[3],campanhaId:a[4],peca:a[5],inicio:a[6],fim:f13(a[6]),tipoValor:i%3===1?'contrato':'periodo',contratoNumero:i%3===1?'CT-2026/'+(110+i):'',valor:a[7],publicoAlvo:a[8],arte:arteEx(a[9],a[10],s[1],s[2],1,s[0])},E);});
+  const RAD=[
+    ['Rádio Cidade Verde','97,5 FM','Teresina, Timon',180000,6200,'2026-08-01','2026-08-31','ex-c3','Spot 30s – Cooperar é Cuidar',8,'7h, 9h, 12h, 17h, 18h'],
+    ['Rádio Campo Maior','104,9 FM','Campo Maior, Altos, Castelo do Piauí',65000,4800,'2026-08-15','2026-10-15','ex-c2','Spot 45s – Safra Forte',5,'5h30, 6h, 12h, 18h'],
+    ['Rádio Antares','90,3 FM','Teresina',120000,3500,'2026-09-01','2026-09-30','ex-c3','Spot 30s – Dia de Cooperar',6,'8h, 11h, 15h, 19h'],
+    ['Rádio Litoral','99,1 FM','Parnaíba, Luís Correia, Ilha Grande',85000,4100,'2026-09-01','2026-10-15','ex-c4','Spot 30s – Conta PJ Sicoob',6,'7h, 12h, 18h'],
+    ['Rádio Picos','96,7 FM','Picos, Oeiras, Valença do Piauí',70000,2600,'2026-10-01','2026-10-31','ex-c5','Spot 30s – Previdência em Família',5,'8h, 13h, 19h'],
+    ['Rádio Piripiri','93,9 FM','Piripiri, Pedro II, Batalha',48000,1900,'2026-10-01','2026-10-31','ex-c4','Spot 30s – Capital de Giro',4,'7h, 12h, 17h'],
+    ['Rádio Teresina','101,5 FM','Teresina, Timon, José de Freitas',150000,6800,'2026-11-01','2026-11-30','ex-c1','Spot 30s – Black Friday Sicoob',9,'7h, 9h, 12h, 15h, 18h'],
+    ['Rádio Clube','102,1 FM','Teresina, Demerval Lobão',95000,3900,'2026-11-05','2026-11-28','ex-c1','Spot 15s – Black Friday última chamada',10,'a cada 2h, das 6h às 20h'],
+    ['Rádio Floriano','92,3 FM','Floriano, Amarante, Barão de Grajaú',52000,2400,'2026-11-10','2026-12-20','ex-c6','Spot 30s – Consórcio Casa Própria',5,'7h, 12h, 18h'],
+    ['Rádio Timon','88,7 FM','Timon, Caxias, Teresina',78000,3300,'2026-12-01','2026-12-24','ex-c7','Spot 30s – Natal Premiado',7,'7h, 10h, 13h, 17h, 19h']
+  ];
+  const r=RAD.map((a,i)=>Object.assign({id:'ex-r'+(i+1),nome:a[0],frequencia:a[1],cidades:a[2],publico:a[3],tipoValor:i%2?'contrato':'periodo',contratoNumero:i%2?'CT-2026/'+(130+i):'',valor:a[4],inicio:a[5],fim:a[6],campanhaId:a[7],spot:a[8],insercoes:a[9],horarios:a[10]},E));
+  const hoje=today();
+  const mk=(rede,i,a)=>{const [data,hora,formato,camp,legenda,t1,t2,valor,alc]=a;const s=cena[camp];const pub=data<hoje;const m=pub?{alcance:alc,impressoes:Math.round(alc*1.7),curtidas:Math.round(alc*(rede==='linkedin'?.045:.07)),comentarios:Math.round(alc*.006),compartilhamentos:Math.round(alc*.009)}:{};
+    return Object.assign({id:'ex-'+rede.slice(0,2)+(i+1),rede,formato,dataHora:data+'T'+hora,status:pub?'publicado':'agendado',campanhaId:camp,legenda,hashtags:'#SicoobCredimepi #Cooperativismo',valor,midia:arteEx(t1,t2,s[1],s[2],0,rede==='linkedin'&&s[0]==='jovem'?'empresa':s[0])},m,E);};
+  const IG=[
+    ['2026-08-05','10:00','Carrossel','ex-c3','Cooperar é cuidar: veja como a Credimepi transforma a comunidade.','Cooperar é Cuidar','Juntos, fazemos mais',600,9800],
+    ['2026-08-22','18:00','Reels','ex-c2','Do plantio à colheita: histórias de cooperados do campo.','Do plantio à colheita','Histórias de quem produz',900,15400],
+    ['2026-09-10','12:00','Feed','ex-c4','Conta PJ Sicoob: 12 meses sem tarifa para o seu negócio.','Conta PJ Sicoob','12 meses sem tarifa',750,8700],
+    ['2026-09-26','19:00','Reels','ex-c3','Dia de Cooperar: bastidores com nossos voluntários.','Dia de Cooperar','Bastidores com voluntários',500,12100],
+    ['2026-10-08','11:00','Carrossel','ex-c5','Previdência Sicoob: planeje hoje o amanhã de quem você ama.','Previdência Sicoob','Futuro em família',800,10300],
+    ['2026-10-21','17:30','Stories','ex-c4','Capital de giro rápido: fale com seu gerente.','Capital de giro','Fale com seu gerente',300,5200],
+    ['2026-11-05','10:00','Carrossel','ex-c1','Black Friday Sicoob chegou! Crédito pessoal com taxas especiais.','Black Friday','Taxas especiais',1500,22400],
+    ['2026-11-20','18:30','Reels','ex-c6','Consórcio Sicoob: o caminho para a casa própria sem juros.','Casa própria','Consórcio sem juros',1200,0],
+    ['2026-12-03','12:00','Feed','ex-c7','Natal Premiado Sicoob: use seu cartão e concorra a prêmios.','Natal Premiado','Use o cartão e concorra',1400,0],
+    ['2026-12-18','19:00','Reels','ex-c7','Faltam poucos dias para o sorteio do Natal Premiado!','Última chamada','Sorteio de Natal',1000,0]
+  ];
+  const LI=[
+    ['2026-08-07','09:00','Post','ex-c3','O cooperativismo cresce no Piauí: veja os números da Credimepi.','Cooperativismo','cresce no Piauí',300,3100],
+    ['2026-08-25','08:30','Artigo','ex-c2','Crédito rural e produtividade: como o cooperativismo apoia o agro.','Agro cooperativo','Crédito e produtividade',400,2800],
+    ['2026-09-09','09:00','Post','ex-c4','Empreender com o Sicoob: soluções completas para a sua empresa.','Empreender','Soluções para sua empresa',600,4600],
+    ['2026-09-23','10:00','Documento','ex-c4','Guia prático de fluxo de caixa para pequenas empresas.','Fluxo de caixa','Guia para pequenas empresas',500,3900],
+    ['2026-10-06','09:00','Post','ex-c2','Safra 26/27: linhas de investimento em máquinas e irrigação.','Safra 26/27','Máquinas e irrigação',350,2500],
+    ['2026-10-20','08:00','Vídeo','ex-c5','Previdência corporativa: benefício que retém talentos.','Previdência PJ','Benefício para equipes',700,3600],
+    ['2026-11-04','09:30','Post','ex-c1','Black Friday Sicoob também para empresas: antecipação de recebíveis.','Black Friday PJ','Antecipação de recebíveis',800,5100],
+    ['2026-11-18','10:00','Artigo','ex-c6','Consórcio imobiliário como estratégia de patrimônio.','Patrimônio','Consórcio imobiliário',450,0],
+    ['2026-12-02','09:00','Post','ex-c7','Natal Premiado: reconhecimento a quem coopera o ano todo.','Natal Premiado','Obrigado por cooperar',600,0],
+    ['2026-12-16','09:00','Documento','ex-c3','Relatório de impacto social 2026 da Sicoob Credimepi.','Impacto social','Relatório 2026',300,0]
+  ];
+  const FB=[
+    ['2026-08-12','12:00','Post','ex-c3','Ações sociais da Credimepi na comunidade.','Cooperar é Cuidar','Ações na comunidade',250,4100],
+    ['2026-10-15','16:00','Vídeo','ex-c5','Quanto antes você começa, mais tranquilo fica o futuro.','Comece cedo','Previdência em família',400,4800],
+    ['2026-11-12','12:00','Post','ex-c1','Cartão Sicoob sem anuidade na Black Friday.','Cartão Sicoob','Sem anuidade',600,6400],
+    ['2026-12-10','18:00','Vídeo','ex-c7','Conheça os prêmios do Natal Premiado Sicoob.','Natal Premiado','Conheça os prêmios',500,0]
+  ];
+  const p=IG.map((a,i)=>mk('instagram',i,a)).concat(LI.map((a,i)=>mk('linkedin',i,a)),FB.map((a,i)=>mk('facebook',i,a)));
+  return {campanhas:c,outdoors:o,radios:r,posts:p};
+}
+async function carregarExemplos(){
+  const ex=dadosExemplo();
+  try{
+    for(const col of COLS){ for(const rec of ex[col]){ await salvar(col,rec); } }
+    toast('Dados de exemplo carregados.');
+  }catch(e){ erroGravar(e); }
+}
+async function removerExemplos(){
+  try{
+    for(const col of COLS){ for(const rec of S.data[col].filter(r=>r.exemplo)){ await excluir(col,rec.id); } }
+    toast('Dados de exemplo removidos.');
+  }catch(e){ erroGravar(e); }
+}
 
 /* ---------- generic list (outdoor / radio) ---------- */
 function listaView(cfg){
@@ -703,7 +1004,7 @@ function redeView(rede){
   h+=ps.length?'<div class="posts">'+ps.map(p=>{
     const m=(p.midia||[])[0];
     const media=m?(/^video\//.test(m.tipo||'')?'<video src="'+blobUrl(m.id)+'" muted></video>':'<img src="'+blobUrl(m.id)+'" alt="">'):(esc(p.formato||T.label));
-    return '<div class="card post" style="--c:'+T.cor+'" data-open="posts:'+p.id+'"><div class="media">'+media+'</div><div class="pb"><div class="pm"><span>'+esc(p.formato||'')+' · '+fmtDT(p.dataHora)+'</span><span class="pill '+esc(p.status)+'">'+esc(p.status||'')+'</span></div><div class="cap">'+esc(p.legenda||'(sem legenda)')+'</div>'+(p.campanhaId?campCell(p.campanhaId):'')+(p.status==='publicado'&&(p.alcance||p.curtidas)?'<div class="pm"><span>👁 '+num(p.alcance)+'</span><span>♥ '+num(p.curtidas)+'</span><span>💬 '+num(p.comentarios)+'</span></div>':'')+'</div></div>';
+    return '<div class="card post" style="--c:'+T.cor+'" data-open="posts:'+p.id+'"><div class="media">'+media+'</div><div class="pb"><div class="pm"><span>'+esc(p.formato||'')+' · '+fmtDT(p.dataHora)+'</span><span class="pill '+esc(p.status)+'">'+esc(p.status||'')+'</span></div><div class="cap">'+esc(p.legenda||'(sem legenda)')+'</div>'+(p.campanhaId?campCell(p.campanhaId):'')+(Number(p.valor)>0?'<div class="pm"><span>Impulsionamento</span><b style="color:var(--dark)">'+money(p.valor)+'</b></div>':'')+(p.status==='publicado'&&(p.alcance||p.curtidas)?'<div class="pm"><span>👁 '+num(p.alcance)+'</span><span>♥ '+num(p.curtidas)+'</span><span>💬 '+num(p.comentarios)+'</span></div>':'')+'</div></div>';
   }).join('')+'</div>':'<div class="empty">Nenhum post '+(st?'com esse status':'cadastrado')+'. Clique em “+ Novo post” ou em um dia do calendário.</div>';
   h+='</div>';
   if(sync.length) h+='<div class="card" style="margin-top:14px"><div class="card-h"><h3>Publicados (sincronizados)</h3><span class="small muted">atualizado '+quando(S.social.atualizadoEm)+'</span></div>'+tabelaSync(sync)+'</div>';
@@ -968,7 +1269,7 @@ function exportCol(col,rede){
   const d=today();
   if(col==='outdoors') return exportar('outdoor-'+d+'.csv',csv(S.data.outdoors,[['Código',r=>r.codigo],['Endereço',r=>r.endereco],['Cidade',r=>r.cidade],['Referência',r=>r.referencia],['Fornecedor',r=>r.fornecedor],['Campanha',r=>campNome(r.campanhaId)],['Peça',r=>r.peca],['Início',r=>fmtD(r.inicio)],['Fim',r=>fmtD(r.fim)],['Pagamento',r=>r.tipoValor==='contrato'?'Contrato':'Período'],['Nº contrato',r=>r.contratoNumero],['Valor (R$)',r=>brNum(r.valor)],['Status',r=>stOut(r).l]]));
   if(col==='radios') return exportar('radio-'+d+'.csv',csv(S.data.radios,[['Rádio',r=>r.nome],['Frequência',r=>r.frequencia],['Cidades',r=>cidadesDe(r.cidades).join(', ')],['Público estimado',r=>r.publico],['Campanha',r=>campNome(r.campanhaId)],['Spot',r=>r.spot],['Inserções/dia',r=>r.insercoes],['Horários',r=>r.horarios],['Início',r=>fmtD(r.inicio)],['Fim',r=>fmtD(r.fim)],['Pagamento',r=>r.tipoValor==='contrato'?'Contrato':'Período'],['Nº contrato',r=>r.contratoNumero],['Valor (R$)',r=>brNum(r.valor)],['Status',r=>stRad(r).l]]));
-  if(col==='posts') return exportar('posts-'+(rede||'todos')+'-'+d+'.csv',csv(S.data.posts.filter(p=>!rede||p.rede===rede),[['Rede',r=>(TIPOS[r.rede]||{}).label],['Formato',r=>r.formato],['Data/hora',r=>fmtDT(r.dataHora)],['Status',r=>r.status],['Campanha',r=>campNome(r.campanhaId)],['Legenda',r=>r.legenda],['Hashtags',r=>r.hashtags],['Link',r=>r.link],['Alcance',r=>r.alcance],['Impressões',r=>r.impressoes],['Curtidas',r=>r.curtidas],['Comentários',r=>r.comentarios],['Compartilhamentos',r=>r.compartilhamentos],['Salvamentos',r=>r.salvamentos]]));
+  if(col==='posts') return exportar('posts-'+(rede||'todos')+'-'+d+'.csv',csv(S.data.posts.filter(p=>!rede||p.rede===rede),[['Rede',r=>(TIPOS[r.rede]||{}).label],['Formato',r=>r.formato],['Data/hora',r=>fmtDT(r.dataHora)],['Status',r=>r.status],['Campanha',r=>campNome(r.campanhaId)],['Legenda',r=>r.legenda],['Hashtags',r=>r.hashtags],['Link',r=>r.link],['Investimento (R$)',r=>brNum(r.valor)],['Alcance',r=>r.alcance],['Impressões',r=>r.impressoes],['Curtidas',r=>r.curtidas],['Comentários',r=>r.comentarios],['Compartilhamentos',r=>r.compartilhamentos],['Salvamentos',r=>r.salvamentos]]));
   if(col==='campanhas'){const v=veiculacoes();return exportar('campanhas-'+d+'.csv',csv(S.data.campanhas,[['Campanha',r=>r.nome],['Início',r=>fmtD(r.inicio)],['Fim',r=>fmtD(r.fim)],['Verba prevista (R$)',r=>brNum(r.verba)],['Realizado (R$)',r=>brNum(v.filter(x=>x.campanhaId===r.id).reduce((s,x)=>s+x.valor,0))],['Outdoors',r=>S.data.outdoors.filter(o=>o.campanhaId===r.id).length],['Rádios',r=>S.data.radios.filter(o=>o.campanhaId===r.id).length],['Posts',r=>S.data.posts.filter(o=>o.campanhaId===r.id).length],['Objetivo',r=>r.objetivo]]));}
 }
 function exportGeral(){
@@ -1022,6 +1323,9 @@ document.addEventListener('click',e=>{
     else if(act==='export-geral') exportGeral();
     else if(act==='sync') sincronizar();
     else if(act==='sair') sair();
+    else if(act==='exemplos') carregarExemplos();
+    else if(act==='rm-exemplos') confirmar('Remover todos os registros de exemplo?',removerExemplos);
+    else if(act==='imprimir'){ let pr=document.getElementById('printRoot'); if(!pr){pr=document.createElement('div');pr.id='printRoot';document.body.appendChild(pr);} pr.innerHTML=$('.deck').innerHTML; try{ window.print(); }catch(e){ toast('Não foi possível abrir a impressão.'); } }
   }
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ch=$('#chooser');if(ch){ch.remove();return;}if(F){fecharModal();return;}if(S.drawerDay) fecharDia();}});
@@ -1038,7 +1342,7 @@ function aplicarLinha(r){
 }
 function idsDe(o){const out=[];const walk=v=>{if(Array.isArray(v)) v.forEach(walk);else if(v&&typeof v==='object'){if(typeof v.id==='string'&&v.nome!==undefined&&!URLS[v.id]) out.push(v.id);Object.values(v).forEach(walk);}};walk(o);return out;}
 async function assinar(ids){
-  ids=Array.from(new Set(ids)).filter(x=>x&&!URLS[x]); if(!ids.length) return;
+  ids=Array.from(new Set(ids)).filter(x=>x&&!URLS[x]&&!String(x).startsWith('data:')); if(!ids.length) return;
   const {data}=await sb.storage.from('midias').createSignedUrls(ids,60*60*12);
   (data||[]).forEach(d=>{if(d.signedUrl) URLS[d.path]=d.signedUrl;});
   agendarRender();
@@ -1076,16 +1380,17 @@ async function bootSupabase(){
 }
 async function sair(){ await sb.auth.signOut(); }
 
+function semear(){ const ex=dadosExemplo(); COLS.forEach(c=>{ if(!S.data[c].length) S.data[c]=ex[c].map(r=>Object.assign({},r)); }); }
 async function boot(){
   if(CFG.supabaseUrl&&CFG.supabaseAnonKey&&window.supabase){ return bootSupabase(); }
   rota();
   let c=window.claude, n=0;
   while((!c||typeof c.use!=='function')&&n<40){await new Promise(r=>setTimeout(r,100));c=window.claude;n++;}
-  if(!c||typeof c.use!=='function'){S.store='local';renderAll();return;}
+  if(!c||typeof c.use!=='function'){S.store='local';semear();renderAll();return;}
   const use=name=>c.use(name).catch(()=>null);
   const res=await Promise.all([use('db'),use('assets'),use('mcp'),use('downloads')]);
   db=res[0];assets=res[1];mcp=res[2];downloads=res[3];
-  if(!db){S.store='local';renderAll();return;}
+  if(!db){S.store='local';semear();renderAll();return;}
   MODO='claude';
   S.store='carregando';
   const timer=setTimeout(()=>{if(S.store==='carregando'){S.store='lento';renderBanner();}},10000);
