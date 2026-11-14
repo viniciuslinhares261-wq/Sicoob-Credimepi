@@ -391,7 +391,7 @@ async function salvar(col,rec){
     await db.collection(col).doc(id).set(body);
   }else{
     const arr=S.data[col]; const i=arr.findIndex(x=>x.id===id);
-    const obj=Object.assign({id},body);
+    const obj=hidratar(Object.assign({id},body));
     if(i>=0) arr[i]=obj; else arr.push(obj);
     agendarRender();
   }
@@ -849,9 +849,11 @@ function arteEx(t1,t2,c1,c2,larga,cena){
   svg+="</svg>";
   return [{id:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg),nome:'arte-exemplo.svg',tipo:'image/svg+xml'}];
 }
+const arteRef=(...a)=>({__arte:a});
+function hidratar(o){Object.keys(o).forEach(k=>{const v=o[k];if(v&&typeof v==='object'&&!Array.isArray(v)&&Array.isArray(v.__arte)) o[k]=arteEx(...v.__arte);});return o;}
 function dadosExemplo(){
   const E={exemplo:true}, f13=d=>addDays(d,13);
-  const C=(id,nome,cor,obj,pub,ini,fim,verba,cena,c1,c2,t2)=>Object.assign({id,nome,cor,objetivo:obj,publico:pub,inicio:ini,fim,verba,pecas:arteEx(nome.split(' – ')[0].split(':')[0],t2,c1,c2,0,cena)},E);
+  const C=(id,nome,cor,obj,pub,ini,fim,verba,cena,c1,c2,t2)=>Object.assign({id,nome,cor,objetivo:obj,publico:pub,inicio:ini,fim,verba,pecas:arteRef(nome.split(' – ')[0].split(':')[0],t2,c1,c2,0,cena)},E);
   const CA=[
     ['ex-c1','Black Friday Sicoob','#00AE9D','Aumentar a contratação de crédito pessoal e cartões com condições especiais de fim de ano.','Cooperados pessoa física, 25 a 55 anos, Teresina e região.','2026-11-01','2026-11-30',48000,'jovem','#003641','#00AE9D','Crédito com taxas especiais'],
     ['ex-c2','Safra Forte – Crédito Rural','#7DB61C','Divulgar as linhas de custeio e investimento para a safra 26/27.','Produtores rurais do norte do Piauí e do Maranhão.','2026-08-15','2026-12-15',42000,'agro','#2f5d0a','#7DB61C','Crédito rural do jeito cooperativo'],
@@ -875,7 +877,7 @@ function dadosExemplo(){
     ['OUT-052','Av. Barão de Gurgueia, 3000','Teresina','Painel Mídia Exterior','ex-c6','Consórcio – sua casa própria','2026-11-17',4900,'Fluxo de ≈ 30 mil veículos/dia, zona sul','Casa própria','Consórcio sem juros'],
     ['OUT-070','Av. Piauí, 1200','Timon','Mídia Leste MA','ex-c7','Natal Premiado – sorteio de prêmios','2026-12-01',4400,'Principal avenida de Timon','Natal Premiado','Use o cartão e concorra']
   ];
-  const o=OUT.map((a,i)=>{const s=cena[a[4]];return Object.assign({id:'ex-o'+(i+1),codigo:a[0],endereco:a[1],cidade:a[2],fornecedor:a[3],campanhaId:a[4],peca:a[5],inicio:a[6],fim:f13(a[6]),tipoValor:i%3===1?'contrato':'periodo',contratoNumero:i%3===1?'CT-2026/'+(110+i):'',valor:a[7],publicoAlvo:a[8],arte:arteEx(a[9],a[10],s[1],s[2],1,s[0])},E);});
+  const o=OUT.map((a,i)=>{const s=cena[a[4]];return Object.assign({id:'ex-o'+(i+1),codigo:a[0],endereco:a[1],cidade:a[2],fornecedor:a[3],campanhaId:a[4],peca:a[5],inicio:a[6],fim:f13(a[6]),tipoValor:i%3===1?'contrato':'periodo',contratoNumero:i%3===1?'CT-2026/'+(110+i):'',valor:a[7],publicoAlvo:a[8],arte:arteRef(a[9],a[10],s[1],s[2],1,s[0])},E);});
   const RAD=[
     ['Rádio Cidade Verde','97,5 FM','Teresina, Timon',180000,6200,'2026-08-01','2026-08-31','ex-c3','Spot 30s – Cooperar é Cuidar',8,'7h, 9h, 12h, 17h, 18h'],
     ['Rádio Campo Maior','104,9 FM','Campo Maior, Altos, Castelo do Piauí',65000,4800,'2026-08-15','2026-10-15','ex-c2','Spot 45s – Safra Forte',5,'5h30, 6h, 12h, 18h'],
@@ -891,7 +893,7 @@ function dadosExemplo(){
   const r=RAD.map((a,i)=>Object.assign({id:'ex-r'+(i+1),nome:a[0],frequencia:a[1],cidades:a[2],publico:a[3],tipoValor:i%2?'contrato':'periodo',contratoNumero:i%2?'CT-2026/'+(130+i):'',valor:a[4],inicio:a[5],fim:a[6],campanhaId:a[7],spot:a[8],insercoes:a[9],horarios:a[10]},E));
   const hoje=today();
   const mk=(rede,i,a)=>{const [data,hora,formato,camp,legenda,t1,t2,valor,alc]=a;const s=cena[camp];const pub=data<hoje;const m=pub?{alcance:alc,impressoes:Math.round(alc*1.7),curtidas:Math.round(alc*(rede==='linkedin'?.045:.07)),comentarios:Math.round(alc*.006),compartilhamentos:Math.round(alc*.009)}:{};
-    return Object.assign({id:'ex-'+rede.slice(0,2)+(i+1),rede,formato,dataHora:data+'T'+hora,status:pub?'publicado':'agendado',campanhaId:camp,legenda,hashtags:'#SicoobCredimepi #Cooperativismo',valor,midia:arteEx(t1,t2,s[1],s[2],0,rede==='linkedin'&&s[0]==='jovem'?'empresa':s[0])},m,E);};
+    return Object.assign({id:'ex-'+rede.slice(0,2)+(i+1),rede,formato,dataHora:data+'T'+hora,status:pub?'publicado':'agendado',campanhaId:camp,legenda,hashtags:'#SicoobCredimepi #Cooperativismo',valor,midia:arteRef(t1,t2,s[1],s[2],0,rede==='linkedin'&&s[0]==='jovem'?'empresa':s[0])},m,E);};
   const IG=[
     ['2026-08-05','10:00','Carrossel','ex-c3','Cooperar é cuidar: veja como a Credimepi transforma a comunidade.','Cooperar é Cuidar','Juntos, fazemos mais',600,9800],
     ['2026-08-22','18:00','Reels','ex-c2','Do plantio à colheita: histórias de cooperados do campo.','Do plantio à colheita','Histórias de quem produz',900,15400],
@@ -1335,7 +1337,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ch=$('#choose
 function aplicarLinha(r){
   if(r.colecao==='config'){ if(r.id==='social'){S.social=r.dados;} agendarRender(); return; }
   if(!S.data[r.colecao]) return;
-  const obj=Object.assign({},r.dados,{id:r.id});
+  const obj=hidratar(Object.assign({},r.dados,{id:r.id}));
   const arr=S.data[r.colecao]; const i=arr.findIndex(x=>x.id===r.id);
   if(i>=0) arr[i]=obj; else arr.push(obj);
   assinar(idsDe(obj)); agendarRender();
@@ -1361,7 +1363,7 @@ async function iniciarSupabase(){
   const {data,error}=await sb.from('registros').select('colecao,id,dados').range(0,9999);
   if(error){S.store='erro';S.storeErr=error.message;renderBanner();return;}
   COLS.forEach(c=>S.data[c]=[]);
-  (data||[]).forEach(r=>{ if(r.colecao==='config'){ if(r.id==='social') S.social=r.dados; } else if(S.data[r.colecao]) S.data[r.colecao].push(Object.assign({},r.dados,{id:r.id})); });
+  (data||[]).forEach(r=>{ if(r.colecao==='config'){ if(r.id==='social') S.social=r.dados; } else if(S.data[r.colecao]) S.data[r.colecao].push(hidratar(Object.assign({},r.dados,{id:r.id}))); });
   S.store='ok'; renderAll();
   assinar(COLS.flatMap(c=>S.data[c].flatMap(idsDe)));
   sb.channel('registros').on('postgres_changes',{event:'*',schema:'public',table:'registros'},pl=>{
@@ -1380,7 +1382,7 @@ async function bootSupabase(){
 }
 async function sair(){ await sb.auth.signOut(); }
 
-function semear(){ const ex=dadosExemplo(); COLS.forEach(c=>{ if(!S.data[c].length) S.data[c]=ex[c].map(r=>Object.assign({},r)); }); }
+function semear(){ const ex=dadosExemplo(); COLS.forEach(c=>{ if(!S.data[c].length) S.data[c]=ex[c].map(r=>hidratar(Object.assign({},r))); }); }
 async function boot(){
   if(CFG.supabaseUrl&&CFG.supabaseAnonKey&&window.supabase){ return bootSupabase(); }
   rota();
@@ -1396,7 +1398,7 @@ async function boot(){
   const timer=setTimeout(()=>{if(S.store==='carregando'){S.store='lento';renderBanner();}},10000);
   COLS.forEach(col=>{
     db.collection(col).onSnapshot(snap=>{
-      S.data[col]=snap.docs.map(d=>Object.assign({},d.data(),{id:d.id}));
+      S.data[col]=snap.docs.map(d=>hidratar(Object.assign({},d.data(),{id:d.id})));
       S.loaded[col]=true;
       if(COLS.every(k=>S.loaded[k])&&(S.store==='carregando'||S.store==='lento')&&!snap.metadata.fromCache){clearTimeout(timer);S.store='ok';}
       agendarRender();
