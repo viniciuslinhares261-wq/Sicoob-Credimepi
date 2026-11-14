@@ -1243,7 +1243,30 @@ function dadosExemplo(){
     {id:'ex-t-e4',nome:'Pós-venda',objetivo:'Relacionamento depois da contratação.'}]},E);
   const map2={'ex-t-e1':['ex-fa1','ex-r9'],'ex-t-e2':['ex-li5','ex-fa2','ex-li13'],'ex-t-e3':['ex-r5','ex-li8'],'ex-t-e4':['ex-li10','ex-fa4']};
   Object.keys(map2).forEach(eid=>map2[eid].forEach(id=>{const x=o.concat(r,p).find(y=>y.id===id);if(x){x.jornadaId='ex-j2';x.etapaId=eid;}}));
-  return {campanhas:c,outdoors:o,radios:r,posts:p,tags:tg,jornadas:[jor,jor2]};
+  const jor3=Object.assign({id:'ex-j3',nome:'Jornada do Colaborador',cor:'#00695f',descricao:'Da atração de talentos ao reconhecimento de quem faz a Credimepi acontecer.',etapas:[
+    {id:'ex-c-e1',nome:'Atração de talentos',objetivo:'Mostrar a Credimepi como um ótimo lugar para trabalhar.'},
+    {id:'ex-c-e2',nome:'Integração',objetivo:'Acolher e preparar quem chega (onboarding).'},
+    {id:'ex-c-e3',nome:'Desenvolvimento',objetivo:'Capacitar e apoiar o crescimento profissional.'},
+    {id:'ex-c-e4',nome:'Reconhecimento',objetivo:'Valorizar conquistas, tempo de casa e boas práticas.'}]},E);
+  const jor4=Object.assign({id:'ex-j4',nome:'Jornada de Endomarketing',cor:'#C9A400',descricao:'Comunicação interna para informar, engajar e celebrar com as equipes.',etapas:[
+    {id:'ex-m-e1',nome:'Informar',objetivo:'Manter todos alinhados com metas, campanhas e mudanças.'},
+    {id:'ex-m-e2',nome:'Engajar',objetivo:'Estimular participação em campanhas e ações internas.'},
+    {id:'ex-m-e3',nome:'Celebrar',objetivo:'Comemorar resultados e datas importantes juntos.'}]},E);
+  const ip=(id,rede,formato,data,hora,legenda,t1,t2,cn,c1,c2,valor,alc,jid,eid)=>{const pub=data<hoje;return Object.assign({id,rede,formato,dataHora:data+'T'+hora,status:pub?'publicado':'agendado',campanhaId:'',legenda,hashtags:'#SicoobCredimepi #SomosCredimepi',valor,jornadaId:jid,etapaId:eid,midia:arteRef(t1,t2,c1,c2,0,cn)},pub?{alcance:alc,impressoes:Math.round(alc*1.5),curtidas:Math.round(alc*.08),comentarios:Math.round(alc*.01),compartilhamentos:Math.round(alc*.015)}:{},E);};
+  p.push(
+    ip('ex-co1','linkedin','Post','2026-08-18','09:00','Venha fazer parte da Credimepi: vagas abertas para gerente de relacionamento.','Vagas abertas','Venha cooperar com a gente','empresa','#00695f','#00AE9D',0,4200,'ex-j3','ex-c-e1'),
+    ip('ex-co2','instagram','Reels','2026-09-04','18:00','Por dentro da Credimepi: um dia na vida de quem trabalha aqui.','Um dia na Credimepi','Por dentro da cooperativa','comunidade','#003641','#00695f',200,7600,'ex-j3','ex-c-e1'),
+    ip('ex-co3','linkedin','Documento','2026-09-21','09:00','Boas-vindas à nova turma de colaboradores: conheça nosso programa de integração.','Boas-vindas','Programa de integração','comunidade','#00695f','#7DB61C',0,2100,'ex-j3','ex-c-e2'),
+    ip('ex-co4','linkedin','Artigo','2026-10-14','09:30','Trilhas de desenvolvimento: 1.200 horas de capacitação em 2026.','1.200 horas','de capacitação em 2026','empresa','#003641','#00695f',0,3400,'ex-j3','ex-c-e3'),
+    ip('ex-co5','instagram','Carrossel','2026-11-10','12:00','Certificação CPA-10: parabéns aos colaboradores aprovados!','Parabéns!','Aprovados na CPA-10','jovem','#00695f','#00AE9D',0,5900,'ex-j3','ex-c-e3'),
+    ip('ex-co6','linkedin','Post','2026-12-11','09:00','Prêmio Destaque do Ano: reconhecendo quem faz a diferença.','Destaque do Ano','Reconhecimento 2026','idosos','#003641','#C9A400',0,0,'ex-j3','ex-c-e4'),
+    ip('ex-en1','facebook','Post','2026-08-03','08:00','Metas do 2º semestre: o que vamos conquistar juntos.','Metas 2º semestre','Vamos juntos','empresa','#7a5c00','#C9A400',0,1800,'ex-j4','ex-m-e1'),
+    ip('ex-en2','instagram','Stories','2026-09-01','08:30','Nova campanha interna: Black Friday começa a ser preparada. Fique por dentro!','Fique por dentro','Campanhas do trimestre','jovem','#003641','#C9A400',0,2600,'ex-j4','ex-m-e1'),
+    ip('ex-en3','instagram','Reels','2026-10-05','18:00','Desafio Cooperar: as equipes que mais engajaram no Dia C.','Desafio Cooperar','Equipes engajadas','comunidade','#7a5c00','#C9A400',0,4300,'ex-j4','ex-m-e2'),
+    ip('ex-en4','facebook','Vídeo','2026-11-03','12:00','Concurso cultural interno: mande sua ideia para a campanha de Natal.','Concurso cultural','Sua ideia no Natal','familia','#003641','#C9A400',0,2200,'ex-j4','ex-m-e2'),
+    ip('ex-en5','instagram','Carrossel','2026-12-19','17:00','Confraternização 2026: obrigado a cada colaborador por este ano incrível!','Confraternização','Obrigado, equipe!','familia','#7a5c00','#C9A400',0,0,'ex-j4','ex-m-e3')
+  );
+  return {campanhas:c,outdoors:o,radios:r,posts:p,tags:tg,jornadas:[jor,jor2,jor3,jor4]};
 }
 async function carregarExemplos(){
   const ex=dadosExemplo();
