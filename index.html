@@ -741,6 +741,7 @@ const VIEWS={
   dashboard:{t:'Painel geral',s:'Investimentos, mídias ativas e alertas em um só lugar.',ic:'◧'},
   calendario:{t:'Calendário',s:'Todas as mídias em veiculação. Clique em um dia para ver ou adicionar.',ic:'▦'},
   campanhas:{t:'Campanhas',s:'Toda mídia se liga a uma campanha.',ic:'◆'},
+  placa:{t:'Placa de inauguração',s:'Mapa da rede de agências e escritórios de negócios, pronto para a gráfica.',ic:'🪧'},
   mapa:{t:'Mapa de atuação',s:'Onde as mídias estão veiculando nos estados com agências.',ic:'⌖'},
   jornadas:{t:'Jornadas',s:'Cada comunicação em uma etapa da jornada do público.',ic:'➜'},
   evidencias:{t:'Evidências PDGC',s:'Tags para comprovar os temas comunicados ao longo do ano.',ic:'✓'},
@@ -760,7 +761,8 @@ function renderSide(){
   $('#side').innerHTML='<div class="brand"><img class="logoimg" src="'+LOGO+'" alt="Sicoob Credimepi"><small>Gestão de Mídias</small><button class="menubtn" data-act="menu" aria-label="Menu">'+(S.menu?'✕ Fechar':'☰ Menu')+(al.length&&!S.menu?' <span class="badge" style="background:#dc2626;border-radius:999px;font-size:11px;padding:0 6px">'+al.length+'</span>':'')+'</button></div>'+
     item('dashboard',al.length)+item('calendario')+item('campanhas')+item('mapa')+item('jornadas')+item('observatorio')+item('evidencias')+
     '<div class="navsec">Mídia offline</div>'+item('outdoor',ao)+item('radio',ar)+
-    '<div class="navsec">Mídias sociais</div>'+item('integracoes')+item('instagram')+item('linkedin')+item('facebook')+(MODO==='supabase'?'<span style="flex:1"></span><button class="nav" data-act="sair"><span class="ic">⎋</span><span>Sair</span></button>':'');
+    '<div class="navsec">Mídias sociais</div>'+item('integracoes')+item('instagram')+item('linkedin')+item('facebook')+
+    '<div class="navsec">Laboratório</div>'+item('placa')+(MODO==='supabase'?'<span style="flex:1"></span><button class="nav" data-act="sair"><span class="ic">⎋</span><span>Sair</span></button>':'');
 }
 function rota(){
   S.menu=false; if(S.placa) S.placa.ativo=false;
@@ -952,8 +954,7 @@ function pathAneis(rings,P){return rings.map(r=>{let s='';for(let i=0;i<r.length
 const COR_AG='#003641', COR_ESC='#49479D', COR_AGP='#00AE9D';
 RENDER.mapa=function(){
   const M=S.mapa, its=itensMapa(), midias=its.filter(x=>x.tipo!=='agencia'), ags=its.filter(x=>x.tipo==='agencia');
-  if(S.placa.ativo) return renderPlaca();
-  $('#topActions').innerHTML='<button class="btn" data-act="mapa-csv">⬇ Excel/CSV</button><button class="btn" data-novo="agencia">+ Nova unidade</button><button class="btn pri" data-act="placa-abrir">🪧 Placa de inauguração</button>';
+  $('#topActions').innerHTML='<button class="btn" data-act="mapa-csv">⬇ Excel/CSV</button><button class="btn pri" data-novo="agencia">+ Nova unidade</button>';
   const js=S.data.jornadas;
   let h='<div class="obsbar" style="flex-wrap:wrap"><b class="small">Estados</b>'+Object.keys(GEO).map(uf=>'<button class="ufchip'+(M.ufs.has(uf)?' on':'')+'" data-mapuf="'+uf+'">'+GEO[uf].nome+'</button>').join('')+
     '<span style="flex-basis:100%;height:0"></span>'+Object.keys(TIPOS).concat(['agencia']).map(k=>'<button class="fchip'+(M.tipos.has(k)?'':' off')+'" data-maptipo="'+k+'"><i style="background:'+(k==='agencia'?COR_AG:TIPOS[k].cor)+'"></i>'+(k==='agencia'?'Agências e escritórios':TIPOS[k].label)+'</button>').join('')+
@@ -1106,11 +1107,11 @@ function placaSVG(logoHref){
   if(c.marcas){const L=mk-2,sw=0.25;[[x0,y0],[x0+W,y0],[x0,y0+H],[x0+W,y0+H]].forEach(([cx,cy])=>{const hx=cx<TW/2?0:TW-L, vy=cy<TH/2?0:TH-L;s+='<line x1="'+hx+'" y1="'+cy+'" x2="'+(hx+L)+'" y2="'+cy+'" stroke="#000" stroke-width="'+sw+'"/><line x1="'+cx+'" y1="'+vy+'" x2="'+cx+'" y2="'+(vy+L)+'" stroke="#000" stroke-width="'+sw+'"/>';});}
   return s+'</svg>';
 }
+RENDER.placa=()=>renderPlaca();
 function renderPlaca(){
   const c=S.placa, un=unidadesPlaca(), unM=c.mapa==='BR'?un:un.filter(u=>u.uf===c.mapa), {W,H}=dimsPlaca();
   if(c.destaque&&!unM.find(u=>u.id===c.destaque)) c.destaque='';
-  $('#title').textContent='Placa de inauguração';$('#subtitle').textContent='Mapa da rede de agências e escritórios de negócios, pronto para a gráfica.';
-  $('#topActions').innerHTML='<button class="btn" data-act="placa-fechar">← Voltar ao mapa</button><button class="btn" data-act="placa-png">⬇ PNG</button><button class="btn" data-act="placa-svg">⬇ SVG</button><button class="btn pri" data-act="placa-pdf">⬇ PDF para gráfica</button>';
+  $('#topActions').innerHTML='<button class="btn" data-act="placa-png">⬇ PNG</button><button class="btn" data-act="placa-svg">⬇ SVG</button><button class="btn pri" data-act="placa-pdf">⬇ PDF para gráfica</button>';
   const seg=(k,opts)=>'<div class="segw">'+opts.map(o=>'<button data-placa="'+k+':'+o[0]+'" class="'+(String(c[k])===String(o[0])?'on':'')+'">'+o[1]+'</button>').join('')+'</div>';
   let h='<div class="placa-wrap"><div class="placa-ctl">'+
     '<div class="f"><label>Mapa</label>'+seg('mapa',[['MG','Minas Gerais'],['RN','Rio Grande do Norte'],['BR','Brasil']])+'</div>'+
@@ -1124,7 +1125,7 @@ function renderPlaca(){
     '<div class="f"><label>Subtítulo</label><input class="inp" id="plSub" value="'+esc(c.subtitulo)+'"></div>'+
     '<div class="f"><label>Unidade inaugurada (destaque)</label><select class="inp" id="plDest"><option value="">— Nenhuma —</option>'+unM.map(u=>'<option value="'+esc(u.id)+'"'+(u.id===c.destaque?' selected':'')+'>'+esc(u.nome)+' – '+u.uf+(u.tipo==='escritorio'?' (escritório)':'')+'</option>').join('')+'</select></div>'+
     '<div class="f"><label>Data da inauguração</label><input class="inp" type="date" id="plData" value="'+esc(c.data)+'"></div>'+
-    '<div class="small muted">Arquivo final: '+(W/10).toLocaleString('pt-BR')+' × '+(H/10).toLocaleString('pt-BR')+' cm'+(+c.sangria?' + '+c.sangria+' mm de sangria':'')+'. '+unM.length+' unidade(s) no mapa. Para mudar cidades ou o tipo (agência/escritório), edite as unidades no Mapa de atuação.</div>'+
+    '<div class="small muted">Arquivo final: '+(W/10).toLocaleString('pt-BR')+' × '+(H/10).toLocaleString('pt-BR')+' cm'+(+c.sangria?' + '+c.sangria+' mm de sangria':'')+'. '+unM.length+' unidade(s) no mapa. Para mudar cidades ou o tipo (agência/escritório), edite as unidades no <a href="#mapa">Mapa de atuação</a>.</div>'+
     '<button class="btn" data-act="placa-todas">⬇ Baixar as 3 placas (PDF)</button>'+
   '</div><div class="placa-prev" id="plPrev">'+placaSVG(LOGO)+'</div></div>';
   $('#view').innerHTML=h;
