@@ -932,7 +932,7 @@ function acharMuni(cidade,uf){const n=normTxt(cidade);if(!n) return null;if(uf&&
 function coordsDoLink(t){const s=String(t||'');let m=s.match(/@(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/[?&](?:q|ll|query)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);return m?{lat:m[1],lng:m[2]}:null;}
 function hashN(s){let x=0;for(const ch of String(s)) x=(x*31+ch.charCodeAt(0))|0;return x;}
 function jitter(id,k){const a=(hashN(id)%360)*Math.PI/180,r=k*(0.35+((hashN(id+'r')>>>0)%100)/160);return [Math.cos(a)*r,Math.sin(a)*r];}
-S.mapa={ufs:new Set(Object.keys(GEO)),tipos:new Set(Object.keys(TIPOS).concat(['agencia'])),campanha:'',jornada:'',ini:today().slice(0,4)+'-01-01',fim:today().slice(0,4)+'-12-31',cidade:''};
+S.mapa={enq:'regiao',ufs:new Set(Object.keys(GEO)),tipos:new Set(Object.keys(TIPOS).concat(['agencia'])),campanha:'',jornada:'',ini:today().slice(0,4)+'-01-01',fim:today().slice(0,4)+'-12-31',cidade:''};
 function itensMapa(){
   const M=S.mapa,out=[];
   const ok=(rec,tipo,ini,fim)=>M.tipos.has(tipo)&&(!M.campanha||rec.campanhaId===M.campanha)&&(!M.jornada||rec.jornadaId===M.jornada)&&(!ini||((fim||ini)>=M.ini&&ini<=M.fim));
@@ -947,8 +947,9 @@ function itensMapa(){
   if(M.tipos.has('agencia')) S.data.agencias.forEach(a=>{const f=acharMuni(a.cidade,a.estado);const uf=a.estado||(f&&f.uf);if(!uf||!M.ufs.has(uf)) return;let ll=(a.lat&&a.lng&&!isNaN(+a.lat))?[+a.lng,+a.lat]:(f?f.m.c:null);if(!ll) return;out.push({tipo:'agencia',col:'agencias',rec:a,uf,ll,cidades:f?[f.m.n]:[a.cidade],titulo:a.nome||'Agência',sub:[a.endereco,a.cidade].filter(Boolean).join(' · '),val:0,pub:0});});
   return out;
 }
-function projetor(uf,W){const all=[];GEO[uf].contorno.forEach(r=>{for(let i=0;i<r.length;i+=2) all.push([r[i],r[i+1]]);});
-  const xs=all.map(p=>p[0]),ys=all.map(p=>p[1]);const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const k=Math.cos(((y0+y1)/2)*Math.PI/180);
+function projetor(uf,W,bb){const all=[];GEO[uf].contorno.forEach(r=>{for(let i=0;i<r.length;i+=2) all.push([r[i],r[i+1]]);});
+  let xs=all.map(p=>p[0]),ys=all.map(p=>p[1]);let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  if(bb){const cx=(bb[0]+bb[1])/2,cy=(bb[2]+bb[3])/2,kk=Math.cos(cy*Math.PI/180);let sx=Math.max((bb[1]-bb[0])*1.35,0.9),sy=Math.max((bb[3]-bb[2])*1.35,0.6);if(sx*kk/sy<1.5) sx=sy*1.5/kk; else sy=sx*kk/1.5;x0=cx-sx/2;x1=cx+sx/2;y0=cy-sy/2;y1=cy+sy/2;}const k=Math.cos(((y0+y1)/2)*Math.PI/180);
   const pad=10,sc=(W-2*pad)/((x1-x0)*k);const H=Math.round((y1-y0)*sc+2*pad);return {W,H,f:(lon,lat)=>[pad+(lon-x0)*k*sc,pad+(y1-lat)*sc]};}
 function pathAneis(rings,P){return rings.map(r=>{let s='';for(let i=0;i<r.length;i+=2){const q=P.f(r[i],r[i+1]);s+=(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1);}return s+'Z';}).join('');}
 const COR_AG='#003641', COR_ESC='#49479D', COR_AGP='#00AE9D';
@@ -957,6 +958,7 @@ RENDER.mapa=function(){
   $('#topActions').innerHTML='<button class="btn" data-act="mapa-csv">⬇ Excel/CSV</button><button class="btn pri" data-novo="agencia">+ Nova unidade</button>';
   const js=S.data.jornadas;
   let h='<div class="obsbar" style="flex-wrap:wrap"><b class="small">Estados</b>'+Object.keys(GEO).map(uf=>'<button class="ufchip'+(M.ufs.has(uf)?' on':'')+'" data-mapuf="'+uf+'">'+GEO[uf].nome+'</button>').join('')+
+    '<span style="width:12px"></span><b class="small">Enquadramento</b><button class="ufchip'+(M.enq==='regiao'?' on':'')+'" data-mapenq="regiao">Região de atuação</button><button class="ufchip'+(M.enq==='estado'?' on':'')+'" data-mapenq="estado">Estado inteiro</button>'+
     '<span style="flex-basis:100%;height:0"></span>'+Object.keys(TIPOS).concat(['agencia']).map(k=>'<button class="fchip'+(M.tipos.has(k)?'':' off')+'" data-maptipo="'+k+'"><i style="background:'+(k==='agencia'?COR_AG:TIPOS[k].cor)+'"></i>'+(k==='agencia'?'Agências e escritórios':TIPOS[k].label)+'</button>').join('')+
     '<span style="flex-basis:100%;height:0"></span><select class="inp" id="mCamp"><option value="">Todas as campanhas</option>'+S.data.campanhas.map(c=>'<option value="'+esc(c.id)+'"'+(c.id===M.campanha?' selected':'')+'>'+esc(c.nome)+'</option>').join('')+'</select>'+
     '<select class="inp" id="mJor"><option value="">Todas as jornadas</option>'+js.map(j=>'<option value="'+esc(j.id)+'"'+(j.id===M.jornada?' selected':'')+'>'+esc(j.nome)+'</option>').join('')+'</select>'+
@@ -968,15 +970,17 @@ RENDER.mapa=function(){
   const corMuni=n=>{if(!n) return '#f4f8f8';const t=Math.min(1,n/maxC);return 'rgba(201,210,0,'+(0.25+0.6*t).toFixed(2)+')';};
   let mapas='';
   [...M.ufs].filter(uf=>GEO[uf]).forEach(uf=>{
-    const P=projetor(uf,620), G=GEO[uf];
-    const itsUF=its.filter(x=>x.uf===uf);
+    const G=GEO[uf], itsUF=its.filter(x=>x.uf===uf);
+    let bb=null;if(M.enq==='regiao'&&itsUF.length){const lx=itsUF.map(x=>x.ll[0]),ly=itsUF.map(x=>x.ll[1]);bb=[Math.min(...lx),Math.max(...lx),Math.min(...ly),Math.max(...ly)];}
+    const P=projetor(uf,620,bb);
     let svg='<svg class="mapsvg" viewBox="0 0 '+P.W+' '+P.H+'" xmlns="http://www.w3.org/2000/svg">';
-    G.municipios.forEach(m=>{const k=m.n+'|'+uf,n=(porMuni[k]||[]).length;svg+='<path class="mu'+(M.cidade===k?' sel':'')+'" data-muni="'+esc(k)+'" d="'+pathAneis(m.r,P)+'" fill="'+corMuni(n)+'"><title>'+esc(m.n)+(n?' — '+n+' mídia(s)':'')+'</title></path>';});
+    G.municipios.forEach(m=>{if(bb){const q=P.f(m.c[0],m.c[1]);if(q[0]<-120||q[0]>P.W+120||q[1]<-120||q[1]>P.H+120) return;}const k=m.n+'|'+uf,n=(porMuni[k]||[]).length;svg+='<path class="mu'+(M.cidade===k?' sel':'')+'" data-muni="'+esc(k)+'" d="'+pathAneis(m.r,P)+'" fill="'+corMuni(n)+'"><title>'+esc(m.n)+(n?' — '+n+' mídia(s)':'')+'</title></path>';});
     svg+='<path class="uf" d="'+pathAneis(G.contorno,P)+'"/>';
+    let lbl='';if(bb) G.municipios.forEach(m=>{const k=m.n+'|'+uf;if(!porMuni[k]) return;const q=P.f(m.c[0],m.c[1]);lbl+='<text x="'+q[0].toFixed(1)+'" y="'+(q[1]+22).toFixed(1)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#003641" stroke="#fff" stroke-width="3" paint-order="stroke" pointer-events="none">'+esc(m.n)+'</text>';});
     itsUF.filter(x=>x.tipo==='radio').forEach(x=>{const q=P.f(x.ll[0],x.ll[1]);svg+='<g class="mk" data-open="radios:'+esc(x.rec.id)+'"><circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="11" fill="none" stroke="#49479D" stroke-width="1.4" opacity=".6"/><circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="6" fill="#49479D" stroke="#fff" stroke-width="1.5"><title>'+esc(x.titulo+' — '+x.sub)+'</title></circle></g>';});
     itsUF.filter(x=>x.tipo==='outdoor'||TIPOS[x.tipo]&&x.tipo!=='radio').forEach(x=>{const q=P.f(x.ll[0],x.ll[1]);const T=TIPOS[x.tipo];svg+='<g class="mk" data-open="'+x.col+':'+esc(x.rec.id)+'">'+(x.tipo==='outdoor'?'<rect x="'+(q[0]-6).toFixed(1)+'" y="'+(q[1]-5).toFixed(1)+'" width="12" height="9" rx="2" fill="'+T.hex+'" stroke="#fff" stroke-width="1.5"><title>'+esc('Outdoor: '+x.titulo+' — '+x.sub+(x.aprox?' (posição aproximada)':''))+'</title></rect>':'<circle cx="'+q[0].toFixed(1)+'" cy="'+q[1].toFixed(1)+'" r="5" fill="'+T.hex+'" stroke="#fff" stroke-width="1.5"><title>'+esc(T.label+': '+x.titulo+' — '+x.sub)+'</title></circle>')+'</g>';});
     itsUF.filter(x=>x.tipo==='agencia').forEach(x=>{const q=P.f(x.ll[0],x.ll[1]);const esc_=x.rec.tipo==='escritorio';svg+='<g class="mk" data-open="agencias:'+esc(x.rec.id)+'"><path d="M'+q[0].toFixed(1)+' '+(q[1]+2).toFixed(1)+' l-7 -11 a8 8 0 1 1 14 0 z" fill="'+(esc_?COR_ESC:COR_AG)+'" stroke="#C9D200" stroke-width="1.6"/><circle cx="'+q[0].toFixed(1)+'" cy="'+(q[1]-11).toFixed(1)+'" r="3" fill="#C9D200"/><title>'+esc((x.rec.tipo==='escritorio'?'Escritório de negócios: ':'Agência: ')+x.titulo+' — '+x.sub)+'</title></g>';});
-    svg+='</svg>';
+    svg+=lbl+'</svg>';
     const nMun=Object.keys(porMuni).filter(k=>k.endsWith('|'+uf)&&porMuni[k].length).length;
     mapas+='<div class="mapcard"><div class="mh2"><b>'+esc(G.nome)+'</b><span class="small muted">'+itsUF.filter(x=>x.tipo!=='agencia').length+' mídia(s) · '+nMun+' cidade(s) · '+itsUF.filter(x=>x.tipo==='agencia').length+' agência(s)</span></div>'+svg+
       '<div class="maplegend"><span><i class="sq" style="background:'+TIPOS.outdoor.hex+'"></i>Outdoor</span><span><i style="background:#49479D"></i>Rádio (anel = abrangência)</span><span><i style="background:'+TIPOS.instagram.hex+'"></i>Instagram</span><span><i style="background:'+TIPOS.linkedin.hex+'"></i>LinkedIn</span><span><i style="background:'+TIPOS.facebook.hex+'"></i>Facebook</span><span><i style="background:'+COR_AG+';border:2px solid #C9D200"></i>Agência</span><span><i style="background:'+COR_ESC+';border:2px solid #C9D200"></i>Escritório de negócios</span><span><i class="sq" style="background:rgba(201,210,0,.8)"></i>Município com mídia (mais forte = mais mídias)</span></div></div>';
@@ -1568,11 +1572,11 @@ function dadosExemplo(){
     ip('ex-en4','facebook','Vídeo','2026-11-03','12:00','Concurso cultural interno: mande sua ideia para a campanha de Natal.','Concurso cultural','Sua ideia no Natal','familia','#003641','#C9A400',0,2200,'ex-j4','ex-m-e2'),
     ip('ex-en5','instagram','Carrossel','2026-12-19','17:00','Confraternização 2026: obrigado a cada colaborador por este ano incrível!','Confraternização','Obrigado, equipe!','familia','#7a5c00','#C9A400',0,0,'ex-j4','ex-m-e3')
   );
-  const LOC_O={'ex-o1':['MG','Belo Horizonte','Av. Afonso Pena, 1500','Fluxo de ≈ 40 mil veículos/dia no centro de BH'],'ex-o2':['MG','Montes Claros','Av. Deputado Esteves Rodrigues, 900','Entrada da cidade, fluxo rural e urbano'],'ex-o3':['RN','Caicó','Av. Seridó, 300','Centro de Caicó, alto fluxo de pedestres'],'ex-o4':['RN','Mossoró','Av. Presidente Dutra, 1200','Corredor comercial de Mossoró'],'ex-o5':['MG','Patos de Minas','Av. Getúlio Vargas, 700','Polo do agronegócio do Alto Paranaíba'],'ex-o6':['MG','Uberlândia','Av. Rondon Pacheco, 2500','Fluxo de ≈ 30 mil veículos/dia'],'ex-o7':['RN','Natal','Av. Engenheiro Roberto Freire, 4000','Corredor de Ponta Negra, zona sul de Natal'],'ex-o8':['MG','Juiz de Fora','Av. Rio Branco, 2000','Principal avenida de Juiz de Fora'],'ex-o9':['RN','Parnamirim','Av. Maria Lacerda Montenegro, 800','Acesso à Grande Natal'],'ex-o10':['MG','Teófilo Otoni','Av. Getúlio Vargas, 300','Centro de Teófilo Otoni']};
+  const LOC_O={'ex-o1':['MG','Belo Horizonte','Av. Afonso Pena, 1500','Fluxo de ≈ 40 mil veículos/dia no centro de BH'],'ex-o2':['MG','João Monlevade','Av. Getúlio Vargas, 2200','Principal avenida comercial de João Monlevade'],'ex-o3':['RN','Caicó','Av. Seridó, 300','Centro de Caicó, alto fluxo de pedestres'],'ex-o4':['RN','Mossoró','Av. Presidente Dutra, 1200','Corredor comercial de Mossoró'],'ex-o5':['MG','Itabira','Av. João Pinheiro, 500','Centro de Itabira'],'ex-o6':['MG','Ouro Preto','Rua Padre Rolim, 800','Entrada da cidade, fluxo de moradores e turistas'],'ex-o7':['RN','Natal','Av. Engenheiro Roberto Freire, 4000','Corredor de Ponta Negra, zona sul de Natal'],'ex-o8':['MG','Betim','Av. Governador Valadares, 1500','Polo comercial e industrial de Betim'],'ex-o9':['RN','Parnamirim','Av. Maria Lacerda Montenegro, 800','Acesso a Nova Parnamirim e à Grande Natal'],'ex-o10':['MG','Itabirito','Av. Queiroz Júnior, 600','Centro de Itabirito, acesso à BR-040']};
   o.forEach(x=>{const L=LOC_O[x.id];if(L){x.estado=L[0];x.cidade=L[1];x.endereco=L[2];x.publicoAlvo=L[3];}});
-  const LOC_R={'ex-r1':['Rádio Horizonte FM','98,3 FM','MG','Belo Horizonte, Contagem, Betim'],'ex-r2':['Rádio Norte de Minas','101,1 FM','MG','Montes Claros, Janaúba, Bocaiuva, Pirapora'],'ex-r3':['Rádio Potiguar FM','95,9 FM','RN','Natal, Parnamirim, São Gonçalo do Amarante'],'ex-r4':['Rádio Triângulo FM','104,7 FM','MG','Uberlândia, Araguari, Uberaba'],'ex-r5':['Rádio Oeste Potiguar','93,5 FM','RN','Mossoró, Areia Branca, Baraúna'],'ex-r6':['Rádio Mucuri FM','92,1 FM','MG','Teófilo Otoni, Nanuque, Carlos Chagas'],'ex-r7':['Rádio Capital Mineira','99,9 FM','MG','Belo Horizonte, Sete Lagoas, Nova Lima'],'ex-r8':['Rádio Vale do Aço','97,7 FM','MG','Ipatinga, Coronel Fabriciano, Timóteo, Governador Valadares'],'ex-r9':['Rádio Seridó FM','90,7 FM','RN','Caicó, Currais Novos, Jardim do Seridó'],'ex-r10':['Rádio Zona da Mata','103,3 FM','MG','Juiz de Fora, Muriaé, Ubá']};
+  const LOC_R={'ex-r1':['Rádio Horizonte FM','98,3 FM','MG','Belo Horizonte, Sabará, Betim'],'ex-r2':['Rádio Vale do Piracicaba','101,1 FM','MG','João Monlevade, Bela Vista de Minas, Rio Piracicaba, Nova Era'],'ex-r3':['Rádio Potiguar FM','95,9 FM','RN','Natal, Parnamirim'],'ex-r4':['Rádio Itabirana FM','104,7 FM','MG','Itabira, Nova Era, São Domingos do Prata'],'ex-r5':['Rádio Oeste Potiguar','93,5 FM','RN','Mossoró'],'ex-r6':['Rádio Estrada Real FM','92,1 FM','MG','Ouro Preto, Ouro Branco, Itabirito'],'ex-r7':['Rádio Capital Mineira','99,9 FM','MG','Belo Horizonte, Sabará'],'ex-r8':['Rádio Cocais FM','97,7 FM','MG','Barão de Cocais, Itabira, João Monlevade'],'ex-r9':['Rádio Seridó FM','90,7 FM','RN','Caicó'],'ex-r10':['Rádio Alto Paraopeba','103,3 FM','MG','Ouro Branco, Ouro Preto']};
   r.forEach(x=>{const L=LOC_R[x.id];if(L){x.nome=L[0];x.frequencia=L[1];x.estado=L[2];x.cidades=L[3];}});
-  const SEG=[['MG','Belo Horizonte'],['RN','Natal'],['MG','Uberlândia'],['RN','Mossoró'],['MG','Montes Claros'],['MG','Juiz de Fora'],['RN','Caicó'],['MG','Teófilo Otoni'],['MG','Patos de Minas'],['RN','Parnamirim']];
+  const SEG=[['MG','Belo Horizonte'],['RN','Natal'],['MG','João Monlevade'],['RN','Mossoró'],['MG','Itabira'],['MG','Ouro Preto'],['RN','Caicó'],['MG','Betim'],['MG','Sabará'],['RN','Parnamirim'],['MG','Bela Vista de Minas'],['MG','Rio Piracicaba'],['MG','Barão de Cocais'],['MG','Ouro Branco'],['MG','Itabirito'],['MG','Nova Era'],['MG','São Domingos do Prata']];
   p.forEach((x,i)=>{const s=SEG[i%SEG.length];x.estado=s[0];x.cidade=s[1];});
   const ag=UNIDADES_EX.map(a=>Object.assign({id:a[0],tipo:a[1],nome:(a[1]==='escritorio'?'Escritório de Negócios ':'Agência ')+a[2],cidade:a[2],estado:a[3]},a[4]?{lat:a[4][0],lng:a[4][1],cidade:'Parnamirim',local:'Nova Parnamirim',nome:'Escritório de Negócios Nova Parnamirim'}:{},E));
   return {campanhas:c,outdoors:o,radios:r,posts:p,tags:tg,jornadas:[jor,jor2,jor3,jor4],agencias:ag};
@@ -1992,6 +1996,8 @@ document.addEventListener('click',e=>{
   if(mu&&S.view==='mapa'){S.mapa.cidade=S.mapa.cidade===mu.dataset.muni?'':mu.dataset.muni;RENDER.mapa();return;}
   const pl=t.closest('[data-placa]');
   if(pl){const [k,v]=pl.dataset.placa.split(':');S.placa[k]=(k==='sangria')?+v:v;renderPlaca();return;}
+  const me=t.closest('[data-mapenq]');
+  if(me){S.mapa.enq=me.dataset.mapenq;RENDER.mapa();return;}
   const mf=t.closest('[data-mapuf]');
   if(mf){const u=mf.dataset.mapuf;if(S.mapa.ufs.has(u)) S.mapa.ufs.delete(u); else S.mapa.ufs.add(u);S.mapa.cidade='';RENDER.mapa();return;}
   const mt=t.closest('[data-maptipo]');
