@@ -770,7 +770,7 @@ const VIEWS={
   dashboard:{t:'Painel geral',s:'Investimentos, mídias ativas e alertas em um só lugar.',ic:'◧'},
   calendario:{t:'Calendário',s:'Todas as mídias em veiculação. Clique em um dia para ver ou adicionar.',ic:'▦'},
   campanhas:{t:'Campanhas',s:'Toda mídia se liga a uma campanha.',ic:'◆'},
-  'placa-inauguracao':{t:'Gerar Placa de Inauguração',s:'Placa com texto institucional, diretoria, conselhos e o mapa da nova agência, pronta para a gráfica.',ic:'🪧'},
+  'placa-inauguracao':{t:'Gerar Placa de Inauguração',s:'Placa 60 × 40 cm com texto institucional, diretoria, conselhos e o mapa da nova agência, pronta para a gráfica.',ic:'🪧'},
   'placa-homenageado':{t:'Gerar placa de homenageado',s:'Placa 40 × 30 cm com nome, foto e mensagem de homenagem, pronta para a gráfica.',ic:'🏅'},
   'gerar-mapa':{t:'Gerar Mapa de Atuação',s:'Imagem 1920 × 1080 px com os municípios da área de atuação, no padrão Sicoob Credimepi.',ic:'🗺'},
   mapa:{t:'Mapa de atuação',s:'Onde as mídias estão veiculando nos estados com agências.',ic:'⌖'},
@@ -1434,12 +1434,12 @@ async function phBaixar(tipo,btn){const txt=btn.innerHTML;btn.disabled=true;btn.
   btn.disabled=false;btn.innerHTML=txt;}
 
 /* ---------- PLACA DE INAUGURAÇÃO ---------- */
-const PI_TAM={'450x300':'45 × 30 cm','600x400':'60 × 40 cm','750x500':'75 × 50 cm','900x600':'90 × 60 cm'};
+const PI_TAM={'600x400':'60 × 40 cm'};
 const PI_PADRAO={tam:'600x400',sangria:3,marcas:false,furos:true,cor:'#0C2D32',
   texto:'Sob a égide dos princípios e valores cooperativistas, nós, associados, estamos construindo a história da nossa Cooperativa: Sicoob Credimepi. E hoje, como marco inaugural de páginas ainda não escritas desta história, estabelecemos um novo conceito de relacionamento que irá solidificar o amálgama em torno do desenvolvimento autossustentável da nossa região.',
   destaque:'INAUGURAMOS, NESTA DATA, A AGÊNCIA DO SICOOB CREDIMEPI.',cidade:'Alvinópolis',uf:'MG',data:'2026-08-21',
   nomes:'Diretoria Executiva\nDiretor Administrativo – Edgard Luís Pena de Moraes\nDiretor Financeiro – Antônio Carlos Guerra Júnior\nDiretor de Negócios – José Sueli Ferreira\n\nMembros do Conselho Fiscal\nConselheiro Fiscal Efetivo – Bruno Drumond Magalhães\nConselheiro Fiscal Efetivo – Denis Almeida dos Reis\nConselheiro Fiscal Efetivo – Maria Aparecida Albuquerque Bueno\nConselheiro Fiscal Suplente – Cássio Martins da Costa Araújo\n\nMembros do Conselho de Administração\nPresidente – Jacson Guerra Araújo\nConselheiro Vogal – Aluísio Sérgio Abalém Vidigal\nConselheiro Vogal – Carlos Augusto Arthuso\nConselheiro Vogal – Lucien Marques Cosme\nConselheiro Vogal – Maria Inês de Araújo Moreira\nConselheiro Vogal – Rodrigo de Amorim Dantas'};
-S.pi=(()=>{try{const v=JSON.parse(localStorage.getItem('sicoob-placa-i')||'null');if(v) return Object.assign({},PI_PADRAO,v);}catch(e){}return Object.assign({},PI_PADRAO);})();
+S.pi=(()=>{try{const v=JSON.parse(localStorage.getItem('sicoob-placa-i')||'null');if(v) return Object.assign({},PI_PADRAO,v,{tam:'600x400'});}catch(e){}return Object.assign({},PI_PADRAO);})();
 function piGuardar(){try{localStorage.setItem('sicoob-placa-i',JSON.stringify(S.pi));}catch(e){}}
 let PI_LOGO=null;function piLogo(){if(PI_LOGO) return PI_LOGO;PI_LOGO=new Promise(ok=>{const im=new Image();im.onload=()=>ok(im);im.onerror=()=>ok(null);im.src=LOGO;});return PI_LOGO;}
 function piDataExt(iso){if(!iso) return '';const [y,m,d]=iso.split('-').map(Number);return d+' DE '+MES_EXT[m-1].toUpperCase()+' DE '+y;}
@@ -1511,7 +1511,7 @@ function renderPlacaI(){
     '<div class="f"><label>Diretoria e conselhos</label><textarea class="inp" id="piNomes" rows="12" style="font-size:12.5px">'+esc(c.nomes)+'</textarea><div class="small muted">Uma linha por pessoa no formato <b>Cargo – Nome</b>. Linhas sem “–” viram títulos. Deixe uma linha em branco entre os grupos.</div></div>'+
     '<div class="f"><label>Mapa</label><div class="small muted">O Brasil destaca os estados onde a cooperativa atua; o recorte mostra a área de atuação (cadastrada em <a href="#gerar-mapa">Gerar Mapa de Atuação</a>) com a cidade da agência em destaque.</div></div>'+
     '<div class="f" style="border-top:1px solid var(--line);padding-top:10px"><label>Arquivo para a gráfica</label>'+
-      '<select class="inp" id="piTam">'+Object.keys(PI_TAM).map(t=>'<option value="'+t+'"'+(t===c.tam?' selected':'')+'>'+PI_TAM[t]+' (L × A)</option>').join('')+'</select>'+
+      '<div class="small" style="background:#e8f6f4;border-radius:8px;padding:8px 10px;color:#00524b">Tamanho final: <b>60 cm (L) × 40 cm (A)</b> · 300 dpi</div>'+
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><select class="inp" id="piSangria"><option value="0"'+(+c.sangria===0?' selected':'')+'>Sem sangria</option><option value="3"'+(+c.sangria===3?' selected':'')+'>Sangria 3 mm</option><option value="5"'+(+c.sangria===5?' selected':'')+'>Sangria 5 mm</option></select>'+
       '<label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="piMarcas"'+(c.marcas?' checked':'')+'> Marcas de corte</label></div>'+
       '<label class="small" style="display:flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" id="piFuros"'+(c.furos?' checked':'')+'> Mostrar furos dos parafusos</label></div>'+
@@ -1521,7 +1521,7 @@ function renderPlacaI(){
   const ok=()=>{const f=acharMuni(c.cidade,c.uf),el=$('#piCidOk');if(el) el.innerHTML=f&&f.uf===c.uf?'✓ '+esc(f.m.n)+' – '+esc(UFNOME[c.uf])+' encontrada no mapa':'<span style="color:var(--bad)">Município não encontrado em '+esc(UFNOME[c.uf]||c.uf)+'</span>';};ok();
   const bind=(id,k,num,ev)=>{const el=$('#'+id);if(!el) return;el[ev||'oninput']=e=>{c[k]=el.type==='checkbox'?el.checked:(num?+el.value:el.value);piGuardar();if(k==='cidade'||k==='uf') ok();piAtualizar();};};
   bind('piCidade','cidade');bind('piData','data');bind('piDest','destaque');bind('piTexto','texto');bind('piNomes','nomes');bind('piCor','cor');
-  bind('piSangria','sangria',1,'onchange');bind('piMarcas','marcas',0,'onchange');bind('piFuros','furos',0,'onchange');bind('piTam','tam',0,'onchange');
+  bind('piSangria','sangria',1,'onchange');bind('piMarcas','marcas',0,'onchange');bind('piFuros','furos',0,'onchange');
   $('#piUf').onchange=e=>{c.uf=e.target.value;piGuardar();renderPlacaI();};
   piAtualizar();
 }
