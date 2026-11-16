@@ -1304,7 +1304,7 @@ function mapaAtuacaoSVG(){
 }
 function renderGerarMapa(){
   const g=S.gm, uf=g.uf, ars=areasUF(uf), [t1,t2]=titulosGM();
-  $('#topActions').innerHTML='<button class="btn" data-act="gm-svg">⬇ SVG</button><button class="btn pri" data-act="gm-png">⬇ Baixar PNG 1920 × 1080</button>';
+  $('#topActions').innerHTML='<button class="btn" data-act="gm-svg">⬇ SVG</button><button class="btn" data-act="gm-pdf">⬇ PDF</button><button class="btn pri" data-act="gm-png">⬇ Baixar PNG 1920 × 1080</button>';
   const munis=GEO[uf].municipios.map(m=>m.n).sort((a,b)=>a.localeCompare(b,'pt'));
   let h='<div class="placa-wrap"><div class="placa-ctl">'+
     '<div class="f"><label>Estado</label><div class="segw">'+Object.keys(GEO).map(u=>'<button data-gmuf="'+u+'" class="'+(u===uf?'on':'')+'">'+GEO[u].nome+'</button>').join('')+'</div></div>'+
@@ -1334,7 +1334,9 @@ async function gmBaixar(tipo,btn){const txt=btn.innerHTML;btn.disabled=true;btn.
   const nome='mapa-de-atuacao-'+S.gm.uf.toLowerCase()+'-1920x1080';
   try{const svg=mapaAtuacaoSVG();
     if(tipo==='svg') await salvarArquivo(nome+'.svg',new Blob([svg],{type:'image/svg+xml'}));
-    else{const im=new Image();await new Promise((ok,er)=>{im.onload=ok;im.onerror=er;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});const cv=document.createElement('canvas');cv.width=1920;cv.height=1080;cv.getContext('2d').drawImage(im,0,0,1920,1080);const blob=await new Promise(r=>cv.toBlob(r,'image/png'));await salvarArquivo(nome+'.png',blob);}
+    else{const esc2=tipo==='pdf'?2:1;const im=new Image();await new Promise((ok,er)=>{im.onload=ok;im.onerror=er;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});const cv=document.createElement('canvas');cv.width=1920*esc2;cv.height=1080*esc2;cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+      if(tipo==='pdf'){await carregarScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');const pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'px',format:[1920,1080],hotfixes:['px_scaling'],compress:true});pdf.setProperties({title:'Mapa de Atuação – Sicoob Credimepi',author:'Sicoob Credimepi'});pdf.addImage(cv.toDataURL('image/jpeg',0.95),'JPEG',0,0,1920,1080);await salvarArquivo(nome+'.pdf',pdf.output('blob'));}
+      else{const blob=await new Promise(r=>cv.toBlob(r,'image/png'));await salvarArquivo(nome+'.png',blob);}}
     toast('Arquivo gerado: '+nome+'.'+tipo);
   }catch(e){console.error(e);toast(MODO==='claude'?'O download não foi concluído (pode ter sido recusado nesta visualização).':'Não foi possível gerar o arquivo.');}
   btn.disabled=false;btn.innerHTML=txt;}
@@ -2209,6 +2211,7 @@ document.addEventListener('click',e=>{
     else if(act==='placa-fechar'){S.placa.ativo=false;renderAll();}
     else if(act==='gm-png') gmBaixar('png',a);
     else if(act==='gm-svg') gmBaixar('svg',a);
+    else if(act==='gm-pdf') gmBaixar('pdf',a);
     else if(act==='gm-add') gmAdd();
     else if(act==='placa-pdf') acaoPlaca('pdf',a);
     else if(act==='placa-svg') acaoPlaca('svg',a);
