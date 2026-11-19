@@ -1231,14 +1231,17 @@ S.gm={uf:'MG',t1:'',t2:'',modo:'categoria',rotulos:false,sel:new Set()};
 const SEM_REG='#9FB3B8',CORES_REG=['#00A99D','#7DB61C','#003641','#C9D200','#49479D','#F2A900','#E1007A','#0072CE'];
 function regioesUF(uf){return (S.data.regioes||[]).filter(r=>(r.estado||'MG')===uf).sort((a,b)=>(+a.ordem||0)-(+b.ordem||0)||String(a.nome).localeCompare(String(b.nome),'pt'));}
 function corTexto(hex){const m=/^#?([0-9a-f]{6})$/i.exec(hex||'');if(!m) return '#FFFFFF';const n=parseInt(m[1],16),r=n>>16&255,g=n>>8&255,b=n&255;return (0.299*r+0.587*g+0.114*b)/255>0.62?'#003641':'#FFFFFF';}
-function listaGM(){const uf=S.gm.uf,l=areasUF(uf);if(S.gm.modo!=='regioes') return l;const ix=new Map(regioesUF(uf).map((r,i)=>[r.id,i]));return l.map((a,i)=>({a,i,r:ix.has(a.regiao)?ix.get(a.regiao):1e6})).sort((p,q)=>p.r-q.r||p.i-q.i).map(o=>o.a);}
+function regsDe(a){const l=Array.isArray(a&&a.regioesIds)&&a.regioesIds.length?a.regioesIds:(a&&a.regiao?[a.regiao]:[]);return [...new Set(l.filter(Boolean))];}
+function comRegs(a,ids){ids=[...new Set((ids||[]).filter(Boolean))];return Object.assign({},a,{regiao:ids[0]||'',regioesIds:ids});}
+function listaGM(){const uf=S.gm.uf,l=areasUF(uf);if(S.gm.modo!=='regioes') return l;const ix=new Map(regioesUF(uf).map((r,i)=>[r.id,i]));return l.map((a,i)=>({a,i,r:Math.min(1e6,...regsDe(a).filter(id=>ix.has(id)).map(id=>ix.get(id)))})).sort((p,q)=>p.r-q.r||p.i-q.i).map(o=>o.a);}
 function areasUF(uf){return S.data.areas.filter(a=>(a.estado||'MG')===uf).sort((a,b)=>(+a.ordem||0)-(+b.ordem||0)||normTxt(a.cidade).localeCompare(normTxt(b.cidade)));}
 function titulosGM(){const uf=S.gm.uf;return [S.gm.t1||'MAPA DE ATUAÇÃO',S.gm.t2||(uf==='RN'?'RIO GRANDE DO NORTE':UFNOME[uf].toUpperCase())];}
 const MES_EXT=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 function mapaAtuacaoSVG(){
   const W=1920,H=1080,uf=S.gm.uf,G=GEO[uf],F='Arial, Helvetica, sans-serif',NAVY='#003641',LIME='#C9D200';
   const RM=S.gm.modo==='regioes',regs=regioesUF(uf),rIdx=new Map(regs.map((r,i)=>[r.id,i]));
-  const ars=listaGM().map(a=>{const f=acharMuni(a.cidade,uf);return f?{a,m:f.m,_r:rIdx.has(a.regiao)?rIdx.get(a.regiao):1e6}:null;}).filter(Boolean);
+  const ars=listaGM().map(a=>{const f=acharMuni(a.cidade,uf);if(!f) return null;const rs=regsDe(a).filter(id=>rIdx.has(id)).map(id=>rIdx.get(id)).sort((x,y)=>x-y);return {a,m:f.m,_rs:rs,_r:rs.length?rs[0]:1e6};}).filter(Boolean);
+  const corIdx=ri=>regs[ri].cor||CORES_REG[ri%CORES_REG.length];
   const NUM=new Map(areasUF(uf).filter(a=>acharMuni(a.cidade,uf)).map((a,i)=>[a.id,i+1])),numDe=o=>NUM.get(o.a.id)||0;
   const corDe=o=>RM?(o._r<1e6?(regs[o._r].cor||CORES_REG[o._r%CORES_REG.length]):SEM_REG):(CAT_AREA[o.a.categoria]||CAT_AREA.agencias).c;
   const [t1,t2]=titulosGM(), hoje=new Date();
@@ -1267,14 +1270,24 @@ function mapaAtuacaoSVG(){
     // sombra + contorno externo da área
     const all=ars.map(o=>dpath(o.m.r)).join('');
     s+='<path d="'+all+'" fill="'+NAVY+'" stroke="'+NAVY+'" stroke-width="7" stroke-linejoin="round" filter="url(#gmSh)"/>';
-    ars.forEach(o=>{s+='<path d="'+dpath(o.m.r)+'" fill="'+corDe(o)+'" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round"/>';});
-    if(RM){const seg=new Map();ars.forEach(o=>o.m.r.forEach(r=>{const n=r.length/2;for(let i=0;i<n;i++){const j=(i+1)%n,a=r[2*i]+','+r[2*i+1],b=r[2*j]+','+r[2*j+1];if(a===b) continue;const key=a<b?a+'|'+b:b+'|'+a,e=seg.get(key);if(e) e.push(o._r);else seg.set(key,[o._r,r[2*i],r[2*i+1],r[2*j],r[2*j+1]]);}}));
-      let d='';seg.forEach(e=>{if(e.length>5&&e[5]!==e[0]){const p1=P(e[1],e[2]),p2=P(e[3],e[4]);d+='M'+p1[0].toFixed(1)+' '+p1[1].toFixed(1)+'L'+p2[0].toFixed(1)+' '+p2[1].toFixed(1);}});
+    let nClip=0;
+    ars.forEach(o=>{const d=dpath(o.m.r);
+      if(RM&&o._rs.length>1){// município em mais de uma região: dividido em faixas com as cores de cada uma
+        let ax=1e9,bx2=-1e9,ay=1e9,by2=-1e9;o.m.r.forEach(r=>{for(let j=0;j<r.length;j+=2){const q=P(r[j],r[j+1]);ax=Math.min(ax,q[0]);bx2=Math.max(bx2,q[0]);ay=Math.min(ay,q[1]);by2=Math.max(by2,q[1]);}});
+        const id='gmDiv'+(nClip++),n=o._rs.length,cx=(ax+bx2)/2,cy=(ay+by2)/2,L=Math.hypot(bx2-ax,by2-ay)+4,wd=L/n;
+        s+='<clipPath id="'+id+'"><path d="'+d+'"/></clipPath><g clip-path="url(#'+id+')"><g transform="rotate(-35 '+cx.toFixed(1)+' '+cy.toFixed(1)+')">';
+        o._rs.forEach((ri,k)=>{s+='<rect x="'+(cx-L/2+k*wd).toFixed(1)+'" y="'+(cy-L/2).toFixed(1)+'" width="'+(wd+0.6).toFixed(1)+'" height="'+L.toFixed(1)+'" fill="'+corIdx(ri)+'"/>';});
+        for(let k=1;k<n;k++){const x=cx-L/2+k*wd;s+='<line x1="'+x.toFixed(1)+'" y1="'+(cy-L/2).toFixed(1)+'" x2="'+x.toFixed(1)+'" y2="'+(cy+L/2).toFixed(1)+'" stroke="#FFFFFF" stroke-width="2.2" stroke-dasharray="7 5"/>';}
+        s+='</g></g><path d="'+d+'" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round"/>';}
+      else s+='<path d="'+d+'" fill="'+corDe(o)+'" stroke="#FFFFFF" stroke-width="1.8" stroke-linejoin="round"/>';});
+    if(RM){const seg=new Map();ars.forEach(o=>o.m.r.forEach(r=>{const n=r.length/2;for(let i=0;i<n;i++){const j=(i+1)%n,a=r[2*i]+','+r[2*i+1],b=r[2*j]+','+r[2*j+1];if(a===b) continue;const key=a<b?a+'|'+b:b+'|'+a,e=seg.get(key);if(e) e.push(o._rs);else seg.set(key,[o._rs,r[2*i],r[2*i+1],r[2*j],r[2*j+1]]);}}));
+      const disj=(x,y)=>!x.some(v=>y.includes(v));
+      let d='';seg.forEach(e=>{if(e.length>5&&disj(e[5],e[0])){const p1=P(e[1],e[2]),p2=P(e[3],e[4]);d+='M'+p1[0].toFixed(1)+' '+p1[1].toFixed(1)+'L'+p2[0].toFixed(1)+' '+p2[1].toFixed(1);}});
       if(d) s+='<path d="'+d+'" fill="none" stroke="'+NAVY+'" stroke-width="3.4" stroke-linecap="round"/>';}
     ars.forEach((o,i)=>{let ax=1e9,bx2=-1e9,ay=1e9,by2=-1e9;o.m.r.forEach(r=>{for(let j=0;j<r.length;j+=2){const q=P(r[j],r[j+1]);ax=Math.min(ax,q[0]);bx2=Math.max(bx2,q[0]);ay=Math.min(ay,q[1]);by2=Math.max(by2,q[1]);}});
       const fs=Math.max(12,Math.min(26,Math.sqrt((bx2-ax)*(by2-ay))*0.2));const q=P(o.m.c[0],o.m.c[1]);
-      s+='<text x="'+q[0].toFixed(1)+'" y="'+(q[1]+fs*0.36).toFixed(1)+'" text-anchor="middle" font-family="'+F+'" font-weight="700" font-size="'+fs.toFixed(1)+'" fill="'+corTexto(corDe(o))+'" stroke="'+(corTexto(corDe(o))==='#FFFFFF'?'rgba(0,54,65,.35)':'rgba(255,255,255,.45)')+'" stroke-width="'+(fs*0.12).toFixed(2)+'" paint-order="stroke">'+numDe(o)+'</text>';});
-    if(RM&&S.gm.rotulos){const caixas=[];regs.forEach((rg,ri)=>{const it=ars.filter(o=>o._r===ri);if(!it.length) return;
+      s+='<text x="'+q[0].toFixed(1)+'" y="'+(q[1]+fs*0.36).toFixed(1)+'" text-anchor="middle" font-family="'+F+'" font-weight="700" font-size="'+fs.toFixed(1)+'" fill="'+(RM&&o._rs.length>1?'#FFFFFF':corTexto(corDe(o)))+'" stroke="'+(RM&&o._rs.length>1?'#003641':(corTexto(corDe(o))==='#FFFFFF'?'rgba(0,54,65,.35)':'rgba(255,255,255,.45)'))+'" stroke-width="'+(fs*(RM&&o._rs.length>1?0.22:0.12)).toFixed(2)+'" paint-order="stroke">'+numDe(o)+'</text>';});
+    if(RM&&S.gm.rotulos){const caixas=[];regs.forEach((rg,ri)=>{const it=ars.filter(o=>o._rs.length===1&&o._r===ri);if(!it.length) return;
       const area=o=>{let A=0;o.m.r.forEach(r=>{for(let i=0;i<r.length;i+=2){const j=(i+2)%r.length;A+=r[i]*r[j+1]-r[j]*r[i+1];}});return Math.abs(A);};
       const big=it.reduce((a,b)=>area(b)>area(a)?b:a);const q=P(big.m.c[0],big.m.c[1]),txt=String(rg.nome||'').toUpperCase(),fsR=19,w=txt.length*fsR*0.68;
       let lx=q[0],ly=q[1]-30;for(let t=0;t<6&&caixas.some(c=>Math.abs(c[0]-lx)<(c[2]+w)/2&&Math.abs(c[1]-ly)<fsR*1.3);t++) ly+=fsR*1.4;caixas.push([lx,ly,w]);
@@ -1304,8 +1317,8 @@ function mapaAtuacaoSVG(){
   const L0=PX+70, LW=W-PX-140;
   s+='<image x="'+(PX+(W-PX-290)/2)+'" y="66" width="290" height="'+(290*910/2680).toFixed(1)+'" href="'+LOGO+'" xlink:href="'+LOGO+'"/>';
   if(RM){let y=230;
-    const grupos=[];regs.forEach((rg,ri)=>{const it=ars.filter(o=>o._r===ri);if(it.length) grupos.push({nome:rg.nome,cor:corDe(it[0]),it});});
-    const sr=ars.filter(o=>o._r>=1e6);if(sr.length) grupos.push({nome:'Sem região',cor:SEM_REG,it:sr});
+    const grupos=[];regs.forEach((rg,ri)=>{const it=ars.filter(o=>o._rs.includes(ri)).sort((p,q)=>numDe(p)-numDe(q));if(it.length) grupos.push({nome:rg.nome,cor:corIdx(ri),it});});
+    const sr=ars.filter(o=>!o._rs.length);if(sr.length) grupos.push({nome:'Sem região',cor:SEM_REG,it:sr});
     s+='<text x="'+L0+'" y="'+y+'" font-family="'+F+'" font-weight="700" font-size="16" letter-spacing="4" fill="'+LIME+'">REGIÕES ('+grupos.filter(g=>g.nome!=='Sem região').length+') · '+ars.length+' MUNICÍPIOS</text>';y+=26;
     const top=y,bot=H-70;let cols=2,rh=38;
     const quebra=(g,yy,rh)=>yy>top&&(yy+rh*1.8+rh>bot||(yy+rh*1.8+g.it.length*rh>bot&&top+rh*1.8+g.it.length*rh<=bot));
@@ -1320,7 +1333,7 @@ function mapaAtuacaoSVG(){
       g.it.forEach(o=>{if(yy+rh>bot){c++;yy=top;}const cx=L0+c*colW,cy=yy+rh/2;
         s+='<circle cx="'+(cx+br).toFixed(1)+'" cy="'+cy.toFixed(1)+'" r="'+br.toFixed(1)+'" fill="'+g.cor+'"'+(g.cor.toUpperCase()==='#003641'?' stroke="#FFFFFF" stroke-width="1.5"':'')+'/>'+
           '<text x="'+(cx+br).toFixed(1)+'" y="'+(cy+br*0.36).toFixed(1)+'" text-anchor="middle" font-family="'+F+'" font-weight="700" font-size="'+(br*0.95).toFixed(1)+'" fill="'+ct+'">'+numDe(o)+'</text>'+
-          '<text x="'+(cx+br*2+10).toFixed(1)+'" y="'+(cy+fs*0.35).toFixed(1)+'" font-family="'+F+'" font-size="'+fs.toFixed(1)+'" fill="#FFFFFF">'+esc(o.m.n)+'</text>';yy+=rh;});
+          '<text x="'+(cx+br*2+10).toFixed(1)+'" y="'+(cy+fs*0.35).toFixed(1)+'" font-family="'+F+'" font-size="'+fs.toFixed(1)+'" fill="#FFFFFF">'+esc(o.m.n)+(o._rs.length>1?'<tspan fill="#C9D200" font-size="'+(fs*0.8).toFixed(1)+'"> · compartilhado</tspan>':'')+'</text>';yy+=rh;});
       yy+=rh*0.5;});
   }else{
   // legenda
@@ -1346,14 +1359,14 @@ function renderGerarMapa(){
   g.sel=new Set([...g.sel].filter(id=>ars.some(a=>a.id===id)));
   const numUI=new Map(areasUF(uf).filter(a=>acharMuni(a.cidade,uf)).map((a,i)=>[a.id,i+1]));
   const optReg=sel=>'<option value="">Sem região</option>'+regs.map(r=>'<option value="'+esc(r.id)+'"'+(r.id===sel?' selected':'')+'>'+esc(r.nome)+'</option>').join('');
-  const corReg=a=>{const i=regs.findIndex(r=>r.id===a.regiao);return i<0?SEM_REG:(regs[i].cor||CORES_REG[i%CORES_REG.length]);};
+  const corReg=a=>{const i=regs.findIndex(r=>r.id===regsDe(a)[0]);return i<0?SEM_REG:(regs[i].cor||CORES_REG[i%CORES_REG.length]);};
   $('#topActions').innerHTML='<button class="btn" data-act="gm-svg">⬇ SVG</button><button class="btn" data-act="gm-pdf">⬇ PDF</button><button class="btn pri" data-act="gm-png">⬇ Baixar PNG 1920 × 1080</button>';
   const munis=GEO[uf].municipios.map(m=>m.n).sort((a,b)=>a.localeCompare(b,'pt'));
   let h='<div class="placa-wrap"><div class="placa-ctl">'+
     '<div class="f"><label>Estado</label><div class="segw">'+Object.keys(GEO).map(u=>'<button data-gmuf="'+u+'" class="'+(u===uf?'on':'')+'">'+GEO[u].nome+'</button>').join('')+'</div></div>'+
     '<div class="f"><label>Tipo de mapa</label><div class="segw"><button data-gmmodo="categoria" class="'+(RM?'':'on')+'">Por categoria</button><button data-gmmodo="regioes" class="'+(RM?'on':'')+'">Por regiões</button></div></div>'+
     (RM?'<div class="f"><label>Regiões de '+esc(GEO[uf].nome)+' ('+regs.length+')</label><div style="border:1px solid var(--line);border-radius:8px">'+
-      (regs.length?regs.map((r,i)=>{const n=ars.filter(a=>a.regiao===r.id).length;return '<div style="display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:4px 6px;align-items:center;padding:6px 8px;border-top:'+(i?'1px solid var(--line)':'0')+'"><input type="color" data-rgcor="'+esc(r.id)+'" value="'+esc(r.cor||CORES_REG[i%CORES_REG.length])+'" title="Cor da região" style="width:32px;height:30px;border:0;background:none;padding:0;cursor:pointer"><input class="inp" data-rgnome="'+esc(r.id)+'" value="'+esc(r.nome)+'" style="padding:5px 7px;font-size:13px"><span style="display:flex;gap:2px"><button class="btn sm" data-rgmv="up:'+esc(r.id)+'" title="Subir">↑</button><button class="btn sm" data-rgmv="down:'+esc(r.id)+'" title="Descer">↓</button><button class="btn sm danger" data-rgmv="rm:'+esc(r.id)+'" title="Excluir região">×</button></span><span style="grid-column:2/4;display:flex;align-items:center;justify-content:space-between;gap:6px"><span class="small muted" style="white-space:nowrap">'+n+(n===1?' município':' municípios')+'</span><button class="btn sm" data-rgmun="'+esc(r.id)+'">📍 Escolher municípios</button></span></div>';}).join(''):'<div class="small muted" style="padding:10px">Nenhuma região criada ainda.</div>')+
+      (regs.length?regs.map((r,i)=>{const n=ars.filter(a=>regsDe(a).includes(r.id)).length;return '<div style="display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:4px 6px;align-items:center;padding:6px 8px;border-top:'+(i?'1px solid var(--line)':'0')+'"><input type="color" data-rgcor="'+esc(r.id)+'" value="'+esc(r.cor||CORES_REG[i%CORES_REG.length])+'" title="Cor da região" style="width:32px;height:30px;border:0;background:none;padding:0;cursor:pointer"><input class="inp" data-rgnome="'+esc(r.id)+'" value="'+esc(r.nome)+'" style="padding:5px 7px;font-size:13px"><span style="display:flex;gap:2px"><button class="btn sm" data-rgmv="up:'+esc(r.id)+'" title="Subir">↑</button><button class="btn sm" data-rgmv="down:'+esc(r.id)+'" title="Descer">↓</button><button class="btn sm danger" data-rgmv="rm:'+esc(r.id)+'" title="Excluir região">×</button></span><span style="grid-column:2/4;display:flex;align-items:center;justify-content:space-between;gap:6px"><span class="small muted" style="white-space:nowrap">'+n+(n===1?' município':' municípios')+'</span><button class="btn sm" data-rgmun="'+esc(r.id)+'">📍 Escolher municípios</button></span></div>';}).join(''):'<div class="small muted" style="padding:10px">Nenhuma região criada ainda.</div>')+
       '</div><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;margin-top:6px"><input class="inp" id="rgNovo" placeholder="Nome da nova região"><button class="btn sm" data-act="rg-add">+ Região</button></div>'+
       '<label class="small" style="display:flex;gap:6px;align-items:center;margin-top:8px"><input type="checkbox" id="gmRot"'+(g.rotulos?' checked':'')+'> Mostrar o nome das regiões sobre o mapa</label></div>':'')+
     '<div class="f"><label>Título (linha 1)</label><input class="inp" id="gmT1" value="'+esc(t1)+'"></div>'+
@@ -1361,7 +1374,7 @@ function renderGerarMapa(){
     '<div class="f"><label>Municípios no mapa ('+ars.length+')</label>'+
       (RM&&regs.length?'<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;margin-bottom:6px;align-items:center"><select class="inp" id="gmLote" style="padding:5px 7px;font-size:13px">'+optReg(regs[0].id)+'</select><button class="btn sm" data-act="gm-lote">Mover marcados ('+g.sel.size+')</button></div><div class="small muted" style="margin:-2px 0 6px">Marque vários municípios e envie todos para uma região de uma vez. <span role="button" style="color:var(--teal,#00A99D);text-decoration:underline;cursor:pointer" data-act="gm-selall">Marcar todos</span> · <span role="button" style="color:var(--teal,#00A99D);text-decoration:underline;cursor:pointer" data-act="gm-selnone">Desmarcar</span></div>':'')+
       '<div style="max-height:'+(RM?420:360)+'px;overflow:auto;border:1px solid var(--line);border-radius:8px">'+
-      (ars.length?ars.map((a,i)=>{const ok=!!acharMuni(a.cidade,uf);return '<div style="display:grid;grid-template-columns:'+(RM?'44px':'22px')+' minmax(0,1fr) auto;gap:4px 6px;align-items:center;padding:6px 8px;border-top:'+(i?'1px solid var(--line)':'0')+'">'+(RM?'<label style="display:flex;gap:4px;align-items:center;cursor:pointer"><input type="checkbox" data-gmsel="'+esc(a.id)+'"'+(g.sel.has(a.id)?' checked':'')+'><b class="small">'+(numUI.get(a.id)||i+1)+'</b></label>':'<b class="small">'+(i+1)+'</b>')+'<span class="small" style="'+(ok?'':'color:var(--bad)')+'" title="'+(ok?'':'Município não encontrado no mapa')+'">'+esc(a.cidade)+'</span><span style="display:flex;gap:2px"><button class="btn sm" data-gmmv="up:'+esc(a.id)+'" title="Subir">↑</button><button class="btn sm" data-gmmv="down:'+esc(a.id)+'" title="Descer">↓</button><button class="btn sm danger" data-gmmv="rm:'+esc(a.id)+'" title="Remover">×</button></span>'+(RM?'<select class="inp" style="grid-column:2/4;padding:4px 6px;font-size:12.5px;border-left:5px solid '+corReg(a)+'" data-gmreg="'+esc(a.id)+'">'+optReg(a.regiao)+'</select>':'<select class="inp" style="grid-column:2/4;padding:4px 6px;font-size:12.5px;border-left:5px solid '+(CAT_AREA[a.categoria]||CAT_AREA.agencias).c+'" data-gmcat="'+esc(a.id)+'">'+ORDEM_CAT.map(c=>'<option value="'+c+'"'+(a.categoria===c?' selected':'')+'>'+CAT_AREA[c].l+'</option>').join('')+'</select>')+'</div>';}).join(''):'<div class="small muted" style="padding:10px">Nenhum município. Adicione abaixo.</div>')+
+      (ars.length?ars.map((a,i)=>{const ok=!!acharMuni(a.cidade,uf);return '<div style="display:grid;grid-template-columns:'+(RM?'44px':'22px')+' minmax(0,1fr) auto;gap:4px 6px;align-items:center;padding:6px 8px;border-top:'+(i?'1px solid var(--line)':'0')+'">'+(RM?'<label style="display:flex;gap:4px;align-items:center;cursor:pointer"><input type="checkbox" data-gmsel="'+esc(a.id)+'"'+(g.sel.has(a.id)?' checked':'')+'><b class="small">'+(numUI.get(a.id)||i+1)+'</b></label>':'<b class="small">'+(i+1)+'</b>')+'<span class="small" style="'+(ok?'':'color:var(--bad)')+'" title="'+(ok?'':'Município não encontrado no mapa')+'">'+esc(a.cidade)+'</span><span style="display:flex;gap:2px"><button class="btn sm" data-gmmv="up:'+esc(a.id)+'" title="Subir">↑</button><button class="btn sm" data-gmmv="down:'+esc(a.id)+'" title="Descer">↓</button><button class="btn sm danger" data-gmmv="rm:'+esc(a.id)+'" title="Remover">×</button></span>'+(RM?'<select class="inp" style="grid-column:2/4;padding:4px 6px;font-size:12.5px;border-left:5px solid '+corReg(a)+'" data-gmreg="'+esc(a.id)+'">'+optReg(regsDe(a)[0])+'</select>'+(regsDe(a).length>1?'<span class="small" style="grid-column:2/4;color:#7a5a00">Também em: '+esc(regsDe(a).slice(1).map(id=>(regs.find(r=>r.id===id)||{}).nome).filter(Boolean).join(', '))+'</span>':''):'<select class="inp" style="grid-column:2/4;padding:4px 6px;font-size:12.5px;border-left:5px solid '+(CAT_AREA[a.categoria]||CAT_AREA.agencias).c+'" data-gmcat="'+esc(a.id)+'">'+ORDEM_CAT.map(c=>'<option value="'+c+'"'+(a.categoria===c?' selected':'')+'>'+CAT_AREA[c].l+'</option>').join('')+'</select>')+'</div>';}).join(''):'<div class="small muted" style="padding:10px">Nenhum município. Adicione abaixo.</div>')+
     '</div></div>'+
     '<div class="f"><label>Adicionar município</label><div style="display:grid;grid-template-columns:1fr;gap:6px"><input class="inp" id="gmNovo" list="gmLista" placeholder="Digite o nome"><select class="inp" id="gmNovoCat">'+ORDEM_CAT.map(c=>'<option value="'+c+'"'+(c==='agencias'?' selected':'')+'>'+CAT_AREA[c].l+'</option>').join('')+'</select>'+(RM?'<select class="inp" id="gmNovoReg">'+optReg(regs[0]&&regs[0].id)+'</select>':'')+'</div><datalist id="gmLista">'+munis.map(m=>'<option value="'+esc(m)+'">').join('')+'</datalist><button class="btn sm" data-act="gm-add" style="margin-top:6px;align-self:flex-start">+ Adicionar</button></div>'+
     '<div class="small muted">'+(RM?'A numeração é a mesma do mapa por categoria (ordem da lista geral); aqui os municípios aparecem agrupados por região.':'A numeração segue a ordem da lista.')+' O arquivo sai com 1920 × 1080 px.</div>'+
@@ -1369,7 +1382,7 @@ function renderGerarMapa(){
   $('#view').innerHTML=h;
   const upd=(id,k)=>{const el=$('#'+id);el.oninput=e=>{g[k]=e.target.value;$('#gmPrev').innerHTML=mapaAtuacaoSVG();};};
   upd('gmT1','t1');upd('gmT2','t2');
-  $$('[data-gmreg]').forEach(el=>el.onchange=async e=>{const r=get('areas',el.dataset.gmreg);if(!r) return;try{await salvar('areas',Object.assign({},r,{regiao:e.target.value}));}catch(err){erroGravar(err);}});
+  $$('[data-gmreg]').forEach(el=>el.onchange=async e=>{const r=get('areas',el.dataset.gmreg);if(!r) return;const v=e.target.value;try{await salvar('areas',comRegs(r,v?[v].concat(regsDe(r).filter(x=>x!==v)):[]));}catch(err){erroGravar(err);}});
   $$('[data-gmsel]').forEach(el=>el.onchange=e=>{e.target.checked?g.sel.add(el.dataset.gmsel):g.sel.delete(el.dataset.gmsel);const b=$('[data-act=gm-lote]');if(b) b.textContent='Mover marcados ('+g.sel.size+')';});
   $$('[data-rgnome]').forEach(el=>el.onchange=async e=>{const r=get('regioes',el.dataset.rgnome),v=e.target.value.trim();if(!r||!v) return;try{await salvar('regioes',Object.assign({},r,{nome:v}));}catch(err){erroGravar(err);}});
   $$('[data-rgcor]').forEach(el=>{el.oninput=e=>{const r=get('regioes',el.dataset.rgcor);if(r){r.cor=e.target.value;$('#gmPrev').innerHTML=mapaAtuacaoSVG();}};el.onchange=async e=>{const r=get('regioes',el.dataset.rgcor);if(!r) return;try{await salvar('regioes',Object.assign({},r,{cor:e.target.value}));}catch(err){erroGravar(err);}};});
@@ -1379,7 +1392,7 @@ function renderGerarMapa(){
 async function gmAdd(){const nome=($('#gmNovo').value||'').trim();if(!nome) return;const f=acharMuni(nome,S.gm.uf);if(!f||f.uf!==S.gm.uf){toast('Município não encontrado em '+UFNOME[S.gm.uf]+'.');return;}
   if(areasUF(S.gm.uf).some(a=>normTxt(a.cidade)===normTxt(f.m.n))){toast('Esse município já está na lista.');return;}
   const ord=Math.max(0,...areasUF(S.gm.uf).map(a=>+a.ordem||0))+1;
-  const nr=$('#gmNovoReg');try{await salvar('areas',Object.assign({cidade:f.m.n,estado:S.gm.uf,categoria:$('#gmNovoCat').value,ordem:ord},nr?{regiao:nr.value}:{}));toast(f.m.n+' adicionado.');}catch(e){erroGravar(e);}}
+  const nr=$('#gmNovoReg');try{await salvar('areas',Object.assign({cidade:f.m.n,estado:S.gm.uf,categoria:$('#gmNovoCat').value,ordem:ord},nr&&nr.value?{regiao:nr.value,regioesIds:[nr.value]}:{}));toast(f.m.n+' adicionado.');}catch(e){erroGravar(e);}}
 async function gmMover(op,id){const l=listaGM(),i=l.findIndex(a=>a.id===id);if(i<0) return;
   if(op==='rm'){confirmar('Remover '+l[i].cidade+' do mapa?',async()=>{try{await excluir('areas',id);}catch(e){erroGravar(e);}});return;}
   const j=op==='up'?i-1:i+1;if(j<0||j>=l.length) return;
@@ -1599,19 +1612,19 @@ function rgMunicipios(rid,info){
   const nomeReg=id=>{const r=regs.find(x=>x.id===id);return r?r.nome:'';};
   const todos=GEO[uf].municipios.map(m=>m.n).sort((a,b)=>a.localeCompare(b,'pt'));
   const numK=new Map(areas.filter(a=>acharMuni(a.cidade,uf)).map((a,i)=>{const f=acharMuni(a.cidade,uf);return [normTxt(f.m.n),i+1];}));
-  const marc=new Set(areas.filter(a=>a.regiao===rid).map(a=>{const f=acharMuni(a.cidade,uf);return normTxt(f?f.m.n:a.cidade);}));
+  const marc=new Set(areas.filter(a=>regsDe(a).includes(rid)).map(a=>{const f=acharMuni(a.cidade,uf);return normTxt(f?f.m.n:a.cidade);}));
   let filtro='mapa',busca='';
   const root=document.createElement('div');document.body.appendChild(root);
   const fechar=()=>root.remove();
   const linhas=()=>{const q=normTxt(busca);return todos.slice().sort((a,b)=>(numK.get(normTxt(a))||1e4)-(numK.get(normTxt(b))||1e4)||a.localeCompare(b,'pt')).filter(n=>{const k=normTxt(n);if(q&&!k.includes(q)&&String(numK.get(k)||'')!==q.trim()) return false;if(filtro==='mapa'&&!porNome.has(k)) return false;if(filtro==='sel'&&!marc.has(k)) return false;return true;}).map(n=>{const k=normTxt(n),a=porNome.get(k),ck=marc.has(k);
-      let tag='';if(!a) tag='<span class="small" style="background:#eef3f3;color:#5b7177;border-radius:99px;padding:1px 8px">fora do mapa</span>';else if(a.regiao&&a.regiao!==rid) tag='<span class="small" style="background:#fff4d6;color:#7a5a00;border-radius:99px;padding:1px 8px">em '+esc(nomeReg(a.regiao)||'outra região')+'</span>';else if(!a.regiao) tag='<span class="small muted">sem região</span>';
-      return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-top:1px solid var(--line);cursor:pointer;'+(ck?'background:#f1faf9':'')+'"><input type="checkbox" data-rgk="'+esc(k)+'"'+(ck?' checked':'')+'>'+(numK.has(k)?'<b style="min-width:26px;height:26px;border-radius:50%;background:'+(a&&a.regiao?((regs.find(r=>r.id===a.regiao)||{}).cor||SEM_REG):SEM_REG)+';color:'+corTexto(a&&a.regiao?((regs.find(r=>r.id===a.regiao)||{}).cor||SEM_REG):SEM_REG)+';display:inline-flex;align-items:center;justify-content:center;font-size:12px">'+numK.get(k)+'</b>':'<span style="min-width:26px"></span>')+'<span style="flex:1">'+esc(n)+'</span>'+tag+'</label>';}).join('')||'<div class="small muted" style="padding:14px">Nenhum município encontrado.</div>';};
+      let tag='';if(!a) tag='<span class="small" style="background:#eef3f3;color:#5b7177;border-radius:99px;padding:1px 8px">fora do mapa</span>';else{const outras=regsDe(a).filter(id=>id!==rid).map(nomeReg).filter(Boolean);if(outras.length) tag='<span class="small" style="background:#fff4d6;color:#7a5a00;border-radius:99px;padding:1px 8px">'+(ck?'também em ':'em ')+esc(outras.join(', '))+'</span>';else if(!regsDe(a).length) tag='<span class="small muted">sem região</span>';}
+      return '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-top:1px solid var(--line);cursor:pointer;'+(ck?'background:#f1faf9':'')+'"><input type="checkbox" data-rgk="'+esc(k)+'"'+(ck?' checked':'')+'>'+(numK.has(k)?'<b style="min-width:26px;height:26px;border-radius:50%;background:'+(a&&regsDe(a).length?((regs.find(r=>r.id===regsDe(a)[0])||{}).cor||SEM_REG):SEM_REG)+';color:'+corTexto(a&&regsDe(a).length?((regs.find(r=>r.id===regsDe(a)[0])||{}).cor||SEM_REG):SEM_REG)+';display:inline-flex;align-items:center;justify-content:center;font-size:12px">'+numK.get(k)+'</b>':'<span style="min-width:26px"></span>')+'<span style="flex:1">'+esc(n)+'</span>'+tag+'</label>';}).join('')||'<div class="small muted" style="padding:14px">Nenhum município encontrado.</div>';};
   const desenhar=()=>{root.innerHTML='<div class="mov" style="z-index:55"><div class="modal" style="max-width:560px"><div class="mh"><h3><i class="sw" style="background:'+esc(cor)+'"></i>Municípios da região '+esc(nomeR)+'</h3><button class="x" data-r="x">×</button></div>'+
     '<div class="mb" style="display:flex;flex-direction:column;gap:8px"><input class="inp" id="rgBusca" placeholder="Buscar por nome ou número do mapa…" value="'+esc(busca)+'">'+
     '<div class="segw"><button data-rf="mapa" class="'+(filtro==='mapa'?'on':'')+'">Da lista do mapa</button><button data-rf="todos" class="'+(filtro==='todos'?'on':'')+'">Todos de '+esc(uf)+'</button><button data-rf="sel" class="'+(filtro==='sel'?'on':'')+'">Marcados ('+marc.size+')</button></div>'+
     '<div id="rgLista" style="max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:2px">'+linhas()+'</div>'+
-    '<div class="small muted">Marcados entram nesta região (saindo da região anterior, se tiverem). Municípios “fora do mapa” marcados são adicionados ao mapa. Desmarcados ficam “Sem região”.</div>'+
-    '<label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="rgTirar"> Remover do mapa os municípios desmarcados desta região</label></div>'+
+    '<div class="small muted">Marcados entram nesta região. Se a cidade já estiver em outra região, ela passa a ficar <b>nas duas</b> e aparece no mapa dividida nas cores de cada uma. Municípios “fora do mapa” marcados são adicionados ao mapa. Desmarcados saem só desta região.</div>'+
+    '<label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="rgTirar"> Remover do mapa os desmarcados que não estiverem em nenhuma outra região</label></div>'+
     '<div class="mf"><span class="small muted" style="margin-right:auto" id="rgCont">'+marc.size+' selecionados</span><button class="btn" data-r="x">Cancelar</button><button class="btn pri" data-r="ok">Salvar região</button></div></div></div>';
     const bi=root.querySelector('#rgBusca');bi.oninput=e=>{busca=e.target.value;root.querySelector('#rgLista').innerHTML=linhas();ligar();};bi.focus();bi.setSelectionRange(busca.length,busca.length);ligar();};
   const ligar=()=>root.querySelectorAll('[data-rgk]').forEach(el=>el.onchange=e=>{e.target.checked?marc.add(el.dataset.rgk):marc.delete(el.dataset.rgk);el.closest('label').style.background=e.target.checked?'#f1faf9':'';root.querySelector('#rgCont').textContent=marc.size+' selecionados';const b=root.querySelector('[data-rf=sel]');if(b) b.textContent='Marcados ('+marc.size+')';});
@@ -1620,18 +1633,18 @@ function rgMunicipios(rid,info){
     const b=t.closest('[data-r]');if(!b) return;if(b.dataset.r==='x'){fechar();return;}
     b.disabled=true;b.innerHTML='<span class="spin"></span> Salvando…';const tirar=root.querySelector('#rgTirar').checked;
     try{let ord=Math.max(0,...areas.map(a=>+a.ordem||0)),n=0;
-      for(const k of marc){const a=porNome.get(k);if(a){if(a.regiao!==rid){await salvar('areas',Object.assign({},a,{regiao:rid}));n++;}}else{const nm=todos.find(x=>normTxt(x)===k);await salvar('areas',{cidade:nm,estado:uf,categoria:'atuacao',ordem:++ord,regiao:rid});n++;}}
-      for(const a of areas){if(a.regiao!==rid) continue;const f=acharMuni(a.cidade,uf),k=normTxt(f?f.m.n:a.cidade);if(marc.has(k)) continue;if(tirar) await excluir('areas',a.id);else await salvar('areas',Object.assign({},a,{regiao:''}));n++;}
+      for(const k of marc){const a=porNome.get(k);if(a){if(!regsDe(a).includes(rid)){await salvar('areas',comRegs(a,regsDe(a).concat(rid)));n++;}}else{const nm=todos.find(x=>normTxt(x)===k);await salvar('areas',{cidade:nm,estado:uf,categoria:'atuacao',ordem:++ord,regiao:rid,regioesIds:[rid]});n++;}}
+      for(const a of areas){if(!regsDe(a).includes(rid)) continue;const f=acharMuni(a.cidade,uf),k=normTxt(f?f.m.n:a.cidade);if(marc.has(k)) continue;const resto=regsDe(a).filter(x=>x!==rid);if(tirar&&!resto.length) await excluir('areas',a.id);else await salvar('areas',comRegs(a,resto));n++;}
       fechar();toast(n?'Região '+nomeR+' atualizada ('+marc.size+(marc.size===1?' município).':' municípios).'):'Nada mudou.');
     }catch(err){b.disabled=false;b.textContent='Salvar região';erroGravar(err);}};
   desenhar();
 }
 async function rgMover(op,id){const l=regioesUF(S.gm.uf),i=l.findIndex(r=>r.id===id);if(i<0) return;
-  if(op==='rm'){const ms=S.data.areas.filter(a=>a.regiao===id);confirmar('Excluir a região '+l[i].nome+'?'+(ms.length?' Os '+ms.length+' municípios dela ficarão “Sem região”.':''),async()=>{try{for(const a of ms) await salvar('areas',Object.assign({},a,{regiao:''}));await excluir('regioes',id);}catch(e){erroGravar(e);}});return;}
+  if(op==='rm'){const ms=S.data.areas.filter(a=>regsDe(a).includes(id));confirmar('Excluir a região '+l[i].nome+'?'+(ms.length?' Os '+ms.length+' municípios dela ficarão “Sem região”.':''),async()=>{try{for(const a of ms) await salvar('areas',comRegs(a,regsDe(a).filter(x=>x!==id)));await excluir('regioes',id);}catch(e){erroGravar(e);}});return;}
   const j=op==='up'?i-1:i+1;if(j<0||j>=l.length) return;const a=l[i],b=l[j],oa=+a.ordem||i+1,ob=+b.ordem||j+1;
   try{await salvar('regioes',Object.assign({},a,{ordem:ob===oa?(op==='up'?oa-1:oa+1):ob}));await salvar('regioes',Object.assign({},b,{ordem:oa}));}catch(e){erroGravar(e);}}
 async function gmLote(){const v=$('#gmLote').value,ids=[...S.gm.sel];if(!ids.length){toast('Marque pelo menos um município.');return;}
-  try{for(const id of ids){const a=get('areas',id);if(a&&(a.regiao||'')!==v) await salvar('areas',Object.assign({},a,{regiao:v}));}S.gm.sel=new Set();toast(ids.length+(ids.length===1?' município movido.':' municípios movidos.'));}catch(e){erroGravar(e);}}
+  try{for(const id of ids){const a=get('areas',id);if(a&&(regsDe(a).join()!==(v||''))) await salvar('areas',comRegs(a,v?[v]:[]));}S.gm.sel=new Set();toast(ids.length+(ids.length===1?' município movido.':' municípios movidos.'));}catch(e){erroGravar(e);}}
 
 /* ---------- JORNADAS ---------- */
 function etapaDe(rec){const j=S.data.jornadas.find(x=>x.id===rec.jornadaId);if(!j) return null;const es=j.etapas||[];const e=es.find(x=>x.id===rec.etapaId);return e?{j,e,idx:es.indexOf(e)}:null;}
